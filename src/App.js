@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './App.css';
+import { memo } from 'react';
 
 function App() {
   const [showAnswer, setShowAnswer] = useState(false);
@@ -9,7 +10,18 @@ function App() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(300);
+  const INITIAL_TIME = 120; // 2 minutes
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const savedTime = localStorage.getItem('timeLeft');
+    const savedTimestamp = localStorage.getItem('timerTimestamp');
+    
+    if (savedTime && savedTimestamp) {
+      const elapsedSeconds = Math.floor((Date.now() - parseInt(savedTimestamp)) / 1000);
+      const remainingTime = Math.max(0, parseInt(savedTime) - elapsedSeconds);
+      return remainingTime > 0 ? remainingTime : 0;
+    }
+    return INITIAL_TIME;
+  });
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const [theme, setTheme] = useState(() => {
@@ -17,6 +29,9 @@ function App() {
     return savedTheme || 'dark';
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isTimeout, setIsTimeout] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('frontend');
 
   // Sample detective puzzle
   const questions = [
@@ -55,13 +70,52 @@ function App() {
     // Add more detective cases here
   ];
 
-  // Programming languages with icons
-  const programmingLanguages = [
-    { id: 'javascript', name: 'JavaScript', icon: '⚡️' },
-    { id: 'python', name: 'Python', icon: '🐍' },
-    { id: 'java', name: 'Java', icon: '☕️' },
-    { id: 'cpp', name: 'C++', icon: '⚙️' },
-    { id: 'rust', name: 'Rust', icon: '🦀' }
+  // Update programming languages data structure
+  const programmingCategories = [
+    {
+      id: 'frontend',
+      name: 'Frontend',
+      icon: '🎨',
+      languages: [
+        { id: 'javascript', name: 'JavaScript', icon: '💛' },
+        { id: 'react', name: 'React', icon: '⚛️' },
+        { id: 'vue', name: 'Vue.js', icon: '💚' },
+        { id: 'angular', name: 'Angular', icon: '🔴' },
+      ]
+    },
+    {
+      id: 'backend',
+      name: 'Backend',
+      icon: '⚙️',
+      languages: [
+        { id: 'golang', name: 'Golang', icon: '🔷' },
+        { id: 'java', name: 'Java', icon: '☕' },
+        { id: 'php', name: 'PHP', icon: '🐘' },
+        { id: 'python', name: 'Python', icon: '🐍' },
+        { id: 'nodejs', name: 'Node.js', icon: '💚' },
+      ]
+    },
+    {
+      id: 'mobile',
+      name: 'Mobile',
+      icon: '📱',
+      languages: [
+        { id: 'swift', name: 'iOS/Swift', icon: '🍎' },
+        { id: 'kotlin', name: 'Android/Kotlin', icon: '🤖' },
+        { id: 'reactnative', name: 'React Native', icon: '⚛️' },
+        { id: 'flutter', name: 'Flutter', icon: '💙' },
+      ]
+    },
+    {
+      id: 'database',
+      name: 'Database',
+      icon: '🗄️',
+      languages: [
+        { id: 'sql', name: 'SQL', icon: '📊' },
+        { id: 'mongodb', name: 'MongoDB', icon: '🍃' },
+        { id: 'redis', name: 'Redis', icon: '🔴' },
+      ]
+    }
   ];
 
   // Difficulty levels with descriptions
@@ -109,7 +163,9 @@ function App() {
   };
 
   const handleAnswerSelect = (answerId) => {
-    setSelectedAnswer(answerId);
+    if (!showAnswer) {  // Only allow selection if answer isn't shown yet
+      setSelectedAnswer(answerId);
+    }
   };
 
   const checkAnswer = () => {
@@ -152,13 +208,19 @@ function App() {
     setShowAnswer(false);
     setVisibleHints([]);
     setSelectedAnswer(null);
-    setTimeLeft(300);
+    setTimeLeft(120);
     setShowEasterEgg(false);
   };
 
   const nextQuestion = () => {
     setCurrentQuestion((prev) => (prev + 1) % questions.length);
-    resetQuestion();
+    setTimeLeft(INITIAL_TIME);
+    localStorage.setItem('timeLeft', INITIAL_TIME.toString());
+    localStorage.setItem('timerTimestamp', Date.now().toString());
+    setIsTimeout(false);
+    setShowAnswer(false);
+    setSelectedAnswer(null);
+    setVisibleHints([]);
   };
 
   const previousQuestion = () => {
@@ -195,14 +257,28 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyboardNavigation);
   }, []);
 
-  React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (timeLeft > 0 && !showAnswer) {
-        setTimeLeft(timeLeft - 1);
-      }
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, [timeLeft, showAnswer]);
+  useEffect(() => {
+    if (!isPaused && timeLeft > 0 && !showAnswer) {
+      // Save current time and timestamp to localStorage
+      localStorage.setItem('timeLeft', timeLeft.toString());
+      localStorage.setItem('timerTimestamp', Date.now().toString());
+
+      const timer = setInterval(() => {
+        setTimeLeft(prev => {
+          const newTime = prev <= 1 ? 0 : prev - 1;
+          if (newTime === 0) {
+            setIsTimeout(true);
+          }
+          // Update localStorage
+          localStorage.setItem('timeLeft', newTime.toString());
+          localStorage.setItem('timerTimestamp', Date.now().toString());
+          return newTime;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [timeLeft, isPaused, showAnswer]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -226,11 +302,150 @@ function App() {
     };
   }, [isMobileMenuOpen]);
 
+  const TimeoutModal = ({ onRetry }) => (
+    <div className="timeout-modal">
+      <div className="timeout-content">
+        <h2>⏰ Time's Up!</h2>
+        <p>You ran out of time for this case.</p>
+        <div className="timeout-stats">
+          <div>Score: {score}</div>
+          <div>Streak: {streak}</div>
+        </div>
+        <div className="timeout-actions">
+          <button onClick={onRetry} className="retry-btn">
+            🔄 Try Again
+          </button>
+          <button onClick={() => nextQuestion()} className="next-btn">
+            ⏭️ Next Case
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const handleRetry = () => {
+    setTimeLeft(INITIAL_TIME);
+    setIsTimeout(false);
+    setShowAnswer(false);
+    setSelectedAnswer(null);
+    setVisibleHints([]);
+    localStorage.setItem('timeLeft', INITIAL_TIME.toString());
+    localStorage.setItem('timerTimestamp', Date.now().toString());
+  };
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('timeLeft');
+      localStorage.removeItem('timerTimestamp');
+    };
+  }, []);
+
+  // Tách riêng Language Button thành component riêng và memo hóa
+  const LanguageButton = memo(({ lang, isSelected, onSelect }) => (
+    <button
+      className={`language-btn ${isSelected ? 'active' : ''}`}
+      onClick={() => onSelect(lang.id)}
+    >
+      <span className="language-icon">{lang.icon}</span>
+      <span className="language-name">{lang.name}</span>
+    </button>
+  ));
+
+  // Tách Category Tab thành component riêng
+  const CategoryTab = memo(({ category, isActive, onClick }) => {
+    const tabRef = useRef(null);
+
+    useEffect(() => {
+      if (isActive && tabRef.current) {
+        const tab = tabRef.current;
+        const container = tab.parentElement;
+        
+        // Calculate scroll position
+        const tabRect = tab.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        // Check if tab is partially visible
+        if (tabRect.right > containerRect.right || tabRect.left < containerRect.left) {
+          // Scroll into view with some padding
+          const scrollPosition = tab.offsetLeft - container.offsetLeft - 
+            (container.offsetWidth / 2) + (tab.offsetWidth / 2);
+          
+          container.scrollTo({
+            left: scrollPosition,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }, [isActive]);
+
+    return (
+      <button
+        ref={tabRef}
+        className={`category-tab ${isActive ? 'active' : ''}`}
+        onClick={() => onClick(category.id)}
+      >
+        <span className="category-icon">{category.icon}</span>
+        <span className="category-name">{category.name}</span>
+      </button>
+    );
+  });
+
+  // Update LanguageSelector component
+  const LanguageSelector = memo(({ 
+    selectedLanguage, 
+    activeCategory,
+    onLanguageSelect,
+    onCategoryChange 
+  }) => {
+    return (
+      <div className="language-selector">
+        <div className="category-tabs">
+          {programmingCategories.map(category => (
+            <CategoryTab
+              key={category.id}
+              category={category}
+              isActive={activeCategory === category.id}
+              onClick={onCategoryChange}
+            />
+          ))}
+        </div>
+
+        <div className="language-grid">
+          {programmingCategories
+            .find(cat => cat.id === activeCategory)
+            ?.languages.map(lang => (
+              <LanguageButton
+                key={lang.id}
+                lang={lang}
+                isSelected={selectedLanguage === lang.id}
+                onSelect={onLanguageSelect}
+              />
+            ))}
+        </div>
+      </div>
+    );
+  });
+
+  const handleCategoryChange = (categoryId) => {
+    setActiveCategory(categoryId);
+    // Optionally select the first language of the new category
+    const firstLangInCategory = programmingCategories
+      .find(cat => cat.id === categoryId)
+      ?.languages[0]?.id;
+    if (firstLangInCategory) {
+      setSelectedLanguage(firstLangInCategory);
+    }
+  };
+
   return (
     <div className="App">
+      <div className={`timer-display floating-control ${timeLeft < 30 ? 'warning' : ''}`}>
+        ⏱️ {formatTime(timeLeft)}
+      </div>
+
       <div className="theme-toggle">
         <button 
-          className="theme-toggle-btn" 
+          className="theme-toggle-btn floating-control"
           onClick={toggleTheme}
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
@@ -245,7 +460,7 @@ function App() {
       
       <div className="ide-layout">
         <button 
-          className="mobile-menu-btn"
+          className="mobile-menu-btn floating-control"
           onClick={toggleMobileMenu}
           aria-label="Toggle menu"
         >
@@ -260,21 +475,12 @@ function App() {
           </div>
 
           <div className="profile-section">
-            <div className="language-selector">
-              <h3>🔧 Expertise Area</h3>
-              <div className="language-grid">
-                {programmingLanguages.map(lang => (
-                  <button
-                    key={lang.id}
-                    className={`language-btn ${selectedLanguage === lang.id ? 'active' : ''}`}
-                    onClick={() => setSelectedLanguage(lang.id)}
-                  >
-                    <span className="language-icon">{lang.icon}</span>
-                    <span className="language-name">{lang.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <LanguageSelector 
+              selectedLanguage={selectedLanguage}
+              activeCategory={activeCategory}
+              onLanguageSelect={setSelectedLanguage}
+              onCategoryChange={handleCategoryChange}
+            />
 
             <div className="difficulty-selector">
               <h3>🎯 Clearance Level</h3>
@@ -303,11 +509,20 @@ function App() {
             </div>
             <div className="stat-item">
               <span className="stat-label">Case Streak</span>
-              <span className="stat-value"> {streak}</span>
+              <span className="stat-value">{streak} 🔥</span>
             </div>
-            <div className="stat-item">
+            <div className={`stat-item timer ${timeLeft < 30 ? 'warning' : ''}`}>
               <span className="stat-label">Time Left</span>
-              <span className="stat-value">⏱️ {formatTime(timeLeft)}</span>
+              <div className="timer-controls">
+                <span className="stat-value">⏱️ {formatTime(timeLeft)}</span>
+                <button 
+                  className="pause-btn"
+                  onClick={() => setIsPaused(!isPaused)}
+                  aria-label={isPaused ? 'Resume timer' : 'Pause timer'}
+                >
+                  {isPaused ? '▶️' : '⏸️'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -315,14 +530,22 @@ function App() {
         <main className="main-content">
           <div className="challenge-container">
             <div className="navigation-buttons">
-              <button className="nav-btn" onClick={previousQuestion}>
-                <span className="icon">←</span> Previous Case
+              <button 
+                className="nav-btn prev-btn" 
+                onClick={previousQuestion}
+                disabled={currentQuestion === 0}
+              >
+                <span className="icon">⬅️</span>
+                <span>Previous Case</span>
               </button>
-              <div className="question-counter">
-                Case File {currentQuestion + 1}/{questions.length}
-              </div>
-              <button className="nav-btn" onClick={nextQuestion}>
-                Next Case <span className="icon">→</span>
+
+              <button 
+                className="nav-btn next-btn" 
+                onClick={nextQuestion}
+                disabled={currentQuestion === questions.length - 1}
+              >
+                <span>Next Case</span>
+                <span className="icon">➡️</span>
               </button>
             </div>
 
@@ -391,11 +614,11 @@ function App() {
                 {answers.map(answer => (
                   <div 
                     key={answer.id} 
-                    className={`answer-card ${selectedAnswer === answer.id ? 'selected' : ''} 
-                      ${showAnswer ? 'answer-revealed' : ''} 
+                    className={`answer-card 
+                      ${selectedAnswer === answer.id ? 'selected' : ''} 
                       ${showAnswer && answer.id === currentCase.correctAnswer ? 'correct' : ''}
                       ${showAnswer && selectedAnswer === answer.id && answer.id !== currentCase.correctAnswer ? 'incorrect' : ''}`}
-                    onClick={() => !showAnswer && handleAnswerSelect(answer.id)}
+                    onClick={() => handleAnswerSelect(answer.id)}
                   >
                     <div className="answer-text">{answer.text}</div>
                   </div>
@@ -445,6 +668,10 @@ function App() {
                   🥚 "Elementary, my dear developer!" 🕵️‍♂️
                 </div>
               </div>
+            )}
+
+            {isTimeout && (
+              <TimeoutModal onRetry={handleRetry} />
             )}
           </div>
         </main>
