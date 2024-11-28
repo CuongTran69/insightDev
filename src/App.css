@@ -822,3 +822,294 @@
     font-size: 1rem;
   }
 }
+
+/* Base responsive layout */
+:root {
+  --sidebar-width: 300px;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+}
+
+/* Layout Structure */
+.ide-layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Sidebar Responsive */
+.sidebar {
+  width: var(--sidebar-width);
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  transition: transform 0.3s ease;
+}
+
+/* Main Content Responsive */
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: var(--spacing-md);
+  min-height: 100vh;
+}
+
+/* Responsive Grid Layouts */
+.language-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.difficulty-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.hints-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.answers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
+  z-index: 1000;
+  padding: var(--spacing-sm);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 250px;
+  }
+  
+  .difficulty-cards {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 999;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+  
+  .challenge-container {
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .navigation-buttons {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .case-file {
+    padding: var(--spacing-sm);
+  }
+
+  .answers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-panel {
+    margin: var(--spacing-sm);
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 576px) {
+  .stats {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .language-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .difficulty-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .hints-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .challenge-title {
+    font-size: 1.25rem;
+  }
+
+  .case-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* Typography Responsive */
+@media (max-width: 768px) {
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  h3 { font-size: 1.1rem; }
+  p { font-size: 0.9rem; }
+}
+
+/* Component-specific responsive styles */
+.answer-card {
+  padding: var(--spacing-md);
+  height: auto;
+  min-height: 80px;
+}
+
+.hint-card {
+  padding: var(--spacing-sm);
+}
+
+.difficulty-card {
+  padding: var(--spacing-sm);
+}
+
+/* Improve sidebar overlay and transitions */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 998;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Smooth scroll behavior for the entire app */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Add transition for solution panel */
+.solution-panel {
+  scroll-margin-top: 20px; /* Adds some space when scrolling to the solution */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  .logo h1 {
+    font-size: 1.2rem;  /* Smaller logo text */
+  }
+
+  .challenge-title {
+    font-size: 1.3rem;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .badge {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .case-meta {
+    gap: 0.5rem;
+  }
+
+  .difficulty-badge, .category-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .statement-item {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    padding: 0.75rem;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 576px) {
+  .logo h1 {
+    font-size: 1rem;
+  }
+
+  .challenge-title {
+    font-size: 1.1rem;
+  }
+
+  .navigation-buttons {
+    font-size: 0.9rem;
+  }
+
+  .question-counter {
+    font-size: 0.8rem;
+  }
+
+  /* Adjust section headings */
+  .case-file h3,
+  .hints-section h3,
+  .answers-section h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Adjust spacing for better mobile layout */
+@media (max-width: 768px) {
+  .challenge-container {
+    padding: 0.75rem;
+  }
+
+  .challenge-header {
+    margin-bottom: 1rem;
+  }
+
+  .title-section {
+    gap: 0.5rem;
+  }
+}

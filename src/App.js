@@ -16,6 +16,7 @@ function App() {
     const savedTheme = localStorage.getItem('theme');
     return savedTheme || 'dark';
   });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Sample detective puzzle
   const questions = [
@@ -120,6 +121,17 @@ function App() {
     } else {
       setStreak(0);
     }
+    
+    // Add smooth scroll to solution
+    setTimeout(() => {
+      const solutionPanel = document.querySelector('.solution-panel');
+      if (solutionPanel) {
+        solutionPanel.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
   };
 
   const calculateScore = () => {
@@ -164,6 +176,10 @@ function App() {
     setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
@@ -188,10 +204,44 @@ function App() {
     return () => clearInterval(intervalId);
   }, [timeLeft, showAnswer]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const sidebar = document.querySelector('.sidebar');
+      const menuButton = document.querySelector('.mobile-menu-btn');
+      
+      if (isMobileMenuOpen && 
+          sidebar && 
+          !sidebar.contains(event.target) && 
+          !menuButton.contains(event.target)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <div className="App">
+      <div 
+        className={`sidebar-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+      
       <div className="ide-layout">
-        <div className="sidebar">
+        <button 
+          className="mobile-menu-btn"
+          onClick={toggleMobileMenu}
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? '✕' : '☰'}
+        </button>
+        <div className={`sidebar ${isMobileMenuOpen ? 'active' : ''}`}>
           <div className="logo">
             <h1>{'</'} Tech Detective {'>'}</h1>
             <div className="badge">🕵️‍♂️ Case Files</div>
