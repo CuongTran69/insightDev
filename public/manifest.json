@@ -1,19 +1,19 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Tech Detective",
+  "name": "Tech Detective - Code Mystery Solver",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "detective.png",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "logo192.png",
+      "src": "detective192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "detective512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

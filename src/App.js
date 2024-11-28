@@ -228,6 +228,16 @@ function App() {
 
   return (
     <div className="App">
+      <div className="theme-toggle">
+        <button 
+          className="theme-toggle-btn" 
+          onClick={toggleTheme}
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+      </div>
+
       <div 
         className={`sidebar-overlay ${isMobileMenuOpen ? 'active' : ''}`}
         onClick={() => setIsMobileMenuOpen(false)}
@@ -242,19 +252,11 @@ function App() {
           {isMobileMenuOpen ? '✕' : '☰'}
         </button>
         <div className={`sidebar ${isMobileMenuOpen ? 'active' : ''}`}>
-          <div className="logo">
-            <h1>{'</'} Tech Detective {'>'}</h1>
-            <div className="badge">🕵️‍♂️ Case Files</div>
-          </div>
-
-          <div className="theme-toggle">
-            <button 
-              className="theme-toggle-btn" 
-              onClick={toggleTheme}
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            >
-              {theme === 'dark' ? '☀️' : '🌙'}
-            </button>
+          <div className="sidebar-header">
+            <div className="logo">
+              <h1>{'</'} Tech Detective {'>'}</h1>
+              <div className="badge">🕵️‍♂️ Case Files</div>
+            </div>
           </div>
 
           <div className="profile-section">
