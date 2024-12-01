@@ -3,6 +3,53 @@ import './App.css';
 import { memo } from 'react';
 import questionsData from './data/questions.json';
 
+// Thêm Error Boundary component (đặt ở trên cùng, ngoài App component)
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, errorInfo: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+    // Có thể gửi error log về server ở đây
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="error-container">
+          <div className="error-content">
+            <div className="error-icon">⚠️</div>
+            <h2>Oops! Có lỗi xảy ra</h2>
+            <p>Xin lỗi vì sự bất tiện này. Hãy thử tải lại trang.</p>
+            <button 
+              className="retry-button"
+              onClick={() => window.location.reload()}
+            >
+              Tải lại trang
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Thêm Error Message component cho các lỗi nhỏ
+const ErrorMessage = memo(({ message }) => (
+  <div className="inline-error">
+    <span className="error-icon">⚠️</span>
+    <span className="error-text">{message}</span>
+  </div>
+));
+
 function App() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [visibleHints, setVisibleHints] = useState([]);
@@ -29,6 +76,7 @@ function App() {
     return savedCategory || 'frontend';
   });
   const questionContainerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Sample detective puzzle
   const questions = questionsData.questions;
@@ -133,38 +181,47 @@ function App() {
     }
   };
 
-  const handleDifficultyChange = (difficulty) => {
-    setSelectedDifficulty(difficulty);
-    localStorage.setItem('selectedDifficulty', difficulty);
-    resetQuestion();
+  const handleDifficultyChange = async (difficulty) => {
+    setIsLoading(true);
+    try {
+      setSelectedDifficulty(difficulty);
+      localStorage.setItem('selectedDifficulty', difficulty);
+      resetQuestion();
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
+    }
   };
 
   const handleAnswerSelect = (answerId) => {
-    if (!showAnswer) {  // Only allow selection if answer isn't shown yet
-      setSelectedAnswer(answerId);
+    try {
+      if (!showAnswer) {
+        setSelectedAnswer(answerId);
+      }
+    } catch (error) {
+      console.error('Error selecting answer:', error);
+      // Có thể hiển thị thông báo lỗi nhẹ ở đây
     }
   };
 
   const checkAnswer = () => {
-    const isCorrect = selectedAnswer === currentCase.correctAnswer;
-    setShowAnswer(true);
-    if (isCorrect) {
-      setScore(score + calculateScore());
-      setStreak(streak + 1);
-    } else {
-      setStreak(0);
-    }
-    
-    // Add smooth scroll to solution
-    setTimeout(() => {
-      const solutionPanel = document.querySelector('.solution-panel');
-      if (solutionPanel) {
-        solutionPanel.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start'
-        });
+    try {
+      if (!showAnswer) {
+        const isCorrect = selectedAnswer === currentCase.correctAnswer;
+        setShowAnswer(true);
+        if (isCorrect) {
+          setScore(score + calculateScore());
+          setStreak(streak + 1);
+        } else {
+          setStreak(0);
+        }
       }
-    }, 100);
+    } catch (error) {
+      console.error('Error checking answer:', error);
+      // Hiển thị thông báo lỗi user-friendly
+      setErrorMessage('Không thể kiểm tra câu trả lời. Vui lòng thử lại.');
+    }
   };
 
   const calculateScore = () => {
@@ -186,14 +243,28 @@ function App() {
     setSelectedAnswer(null);
   };
 
-  const nextQuestion = () => {
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      // Quay lại câu hỏi đầu tiên nếu đã hết
-      setCurrentQuestionIndex(0);
+  const nextQuestion = async () => {
+    setIsLoading(true);
+    try {
+      if (currentQuestionIndex < filteredQuestions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        setCurrentQuestionIndex(0);
+      }
+      resetQuestion();
+      
+      // Scroll to top của question container với animation mượt
+      if (questionContainerRef.current) {
+        questionContainerRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
     }
-    resetQuestion();
   };
 
   const toggleTheme = () => {
@@ -413,6 +484,193 @@ function App() {
 
   const totalQuestions = filteredQuestions.length;
 
+  // Thêm LoadingIndicator component (đặt trước component App)
+  const LoadingIndicator = memo(() => (
+    <div className="loading-overlay">
+      <div className="loading-spinner">
+        <div className="spinner"></div>
+        <div className="loading-text">Loading...</div>
+      </div>
+    </div>
+  ));
+
+  // Thêm state để lưu progress
+  const [progress, setProgress] = useState(() => {
+    const savedProgress = localStorage.getItem('questionProgress');
+    return savedProgress ? JSON.parse(savedProgress) : {};
+  });
+
+  // Thêm useEffect để lưu tiến độ khi trả lời câu hỏi
+  useEffect(() => {
+    if (showAnswer) {
+      const newProgress = {
+        ...progress,
+        [`${selectedLanguage}-${selectedDifficulty}`]: {
+          ...progress[`${selectedLanguage}-${selectedDifficulty}`],
+          [currentQuestionIndex]: {
+            answered: true,
+            correct: selectedAnswer === currentCase.correctAnswer,
+            timestamp: new Date().toISOString()
+          }
+        }
+      };
+      setProgress(newProgress);
+      localStorage.setItem('questionProgress', JSON.stringify(newProgress));
+    }
+  }, [showAnswer]);
+
+  // Tách ProgressBar thành component riêng và thêm vào 2 vị trí
+  const ProgressBar = memo(({ language, difficulty, isMobile }) => {
+    const currentProgress = progress[`${language}-${difficulty}`] || {};
+    const totalQuestions = filteredQuestions.length;
+    const answeredCount = Object.values(currentProgress).filter(q => q.answered).length;
+    const correctCount = Object.values(currentProgress).filter(q => q.correct).length;
+    
+    const percentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+    
+    return (
+      <div className={`progress-section ${isMobile ? 'mobile' : ''}`}>
+        <div className="progress-stats">
+          <div className="progress-stat">
+            <span>Đã làm</span>
+            <span>{answeredCount}/{totalQuestions}</span>
+          </div>
+          <div className="progress-stat">
+            <span>Đúng</span>
+            <span>{correctCount}/{answeredCount}</span>
+          </div>
+        </div>
+        <div className="progress-bar">
+          <div 
+            className="progress-fill"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+      </div>
+    );
+  });
+
+  // Thêm useEffect cho keyboard shortcuts
+  React.useEffect(() => {
+    const handleKeyboardNavigation = (e) => {
+      // Chuyển câu hỏi tiếp theo với phím mũi tên phải
+      if (e.key === 'ArrowRight') nextQuestion();
+
+      // Kiểm tra đáp án với phím Enter khi đã chọn câu trả lời
+      if (e.key === 'Enter' && selectedAnswer && !showAnswer) {
+        checkAnswer();
+      }
+
+      // Chọn đáp án với phím số (1-4)
+      if (['1', '2', '3', '4'].includes(e.key) && !showAnswer) {
+        const answerIndex = parseInt(e.key) - 1;
+        if (answers[answerIndex]) {
+          handleAnswerSelect(answers[answerIndex].id);
+        }
+      }
+
+      // Hiển thị/ẩn gợi ý với phím H
+      if (e.key.toLowerCase() === 'h') {
+        const unrevealedHints = hints.filter((_, index) => !visibleHints.includes(index));
+        if (unrevealedHints.length > 0) {
+          toggleHint(hints.findIndex((_, index) => !visibleHints.includes(index)));
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyboardNavigation);
+    return () => window.removeEventListener('keydown', handleKeyboardNavigation);
+  }, [selectedAnswer, showAnswer, answers, hints, visibleHints]);
+
+  // Thêm component KeyboardShortcuts
+  const KeyboardShortcuts = memo(() => (
+    <div className="keyboard-shortcuts">
+      <h3>⌨️ Phím tắt</h3>
+      <div className="shortcuts-grid">
+        <div className="shortcut-item">
+          <kbd>→</kbd>
+          <span>Câu tiếp theo</span>
+        </div>
+        <div className="shortcut-item">
+          <kbd>Enter</kbd>
+          <span>Kiểm tra đáp án</span>
+        </div>
+        <div className="shortcut-item">
+          <kbd>1</kbd>-<kbd>4</kbd>
+          <span>Chọn đáp án</span>
+        </div>
+        <div className="shortcut-item">
+          <kbd>H</kbd>
+          <span>Hiện gợi ý</span>
+        </div>
+      </div>
+    </div>
+  ));
+
+  // Thêm state cho share status
+  const [shareStatus, setShareStatus] = useState({
+    isSharing: false,
+    message: ''
+  });
+
+  // Thêm hàm share
+  const shareQuestion = async () => {
+    setShareStatus({ isSharing: true, message: '' });
+    
+    const shareData = {
+      title: 'Tech Detective Challenge',
+      text: `Can you solve this coding challenge? "${currentCase?.title}"`,
+      url: window.location.href
+    };
+
+    try {
+      if (navigator.share) {
+        // Mobile native share
+        await navigator.share(shareData);
+        setShareStatus({ isSharing: false, message: 'Shared successfully!' });
+      } else {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(
+          `${shareData.text}\n${shareData.url}`
+        );
+        setShareStatus({ isSharing: false, message: 'Link copied to clipboard!' });
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+      setShareStatus({ 
+        isSharing: false, 
+        message: 'Failed to share. Please try again.'
+      });
+    }
+
+    // Clear status message after 2 seconds
+    setTimeout(() => {
+      setShareStatus({ isSharing: false, message: '' });
+    }, 2000);
+  };
+
+  // Sửa lại Share Button component
+  const ShareButton = memo(({ onShare, isSharing, message }) => (
+    <div className="share-container">
+      <button 
+        className="share-button floating-control"
+        onClick={onShare}
+        disabled={isSharing}
+        aria-label="Share question"
+      >
+        {isSharing ? '⏳' : '📤'}
+      </button>
+      {message && (
+        <div className="share-message">
+          {message}
+        </div>
+      )}
+    </div>
+  ));
+
+  // Thêm state cho error message
+  const [errorMessage, setErrorMessage] = useState(null);
+
   return (
     <div className="App">
       <div className="theme-toggle">
@@ -470,6 +728,12 @@ function App() {
                 ))}
               </div>
             </div>
+
+            <ProgressBar 
+              language={selectedLanguage}
+              difficulty={selectedDifficulty}
+              isMobile={false}
+            />
           </div>
 
           <div className="stats">
@@ -482,18 +746,28 @@ function App() {
               <span className="stat-value">{streak} 🔥</span>
             </div>
           </div>
+          <KeyboardShortcuts />
         </div>
         
         <main className="main-content">
           {filteredQuestions.length > 0 ? (
-            <div className="challenge-container" ref={questionContainerRef}>
-              <div className="navigation-buttons">
+            <div 
+              className={`challenge-container ${isLoading ? 'loading' : ''}`} 
+              ref={questionContainerRef}
+            >
+              {isLoading && <LoadingIndicator />}
+              <div className="floating-controls">
+                <ShareButton 
+                  onShare={shareQuestion}
+                  isSharing={shareStatus.isSharing}
+                  message={shareStatus.message}
+                />
                 <button 
                   className={`floating-control nav-btn ${showAnswer ? 'answered' : ''}`}
                   onClick={nextQuestion}
                   aria-label="Next case"
                 >
-                  <span className="icon">⏭️</span>
+                  ⏭️
                 </button>
               </div>
 
