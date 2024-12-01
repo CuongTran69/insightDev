@@ -10,28 +10,21 @@ function App() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [streak, setStreak] = useState(0);
-  const INITIAL_TIME = 120; // 2 minutes
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const savedTime = localStorage.getItem('timeLeft');
-    const savedTimestamp = localStorage.getItem('timerTimestamp');
-    
-    if (savedTime && savedTimestamp) {
-      const elapsedSeconds = Math.floor((Date.now() - parseInt(savedTimestamp)) / 1000);
-      const remainingTime = Math.max(0, parseInt(savedTime) - elapsedSeconds);
-      return remainingTime > 0 ? remainingTime : 0;
-    }
-    return INITIAL_TIME;
-  });
   const [showEasterEgg, setShowEasterEgg] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('javascript');
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+    return savedLanguage || 'javascript';
+  });
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
     return savedTheme || 'dark';
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isTimeout, setIsTimeout] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('frontend');
+  const [activeCategory, setActiveCategory] = useState(() => {
+    const savedCategory = localStorage.getItem('activeCategory');
+    return savedCategory || 'frontend';
+  });
+  const questionContainerRef = useRef(null);
 
   // Sample detective puzzle
   const questions = [
@@ -197,41 +190,34 @@ function App() {
       'hard': 300
     }[selectedDifficulty];
     
-    const timeBonus = Math.floor(timeLeft / 10);
     const streakBonus = streak * 50;
     const hintPenalty = visibleHints.length * 25;
     
-    return baseScore + timeBonus + streakBonus - hintPenalty;
+    return baseScore + streakBonus - hintPenalty;
   };
 
   const resetQuestion = () => {
     setShowAnswer(false);
     setVisibleHints([]);
     setSelectedAnswer(null);
-    setTimeLeft(120);
-    setShowEasterEgg(false);
   };
 
   const nextQuestion = () => {
-    setCurrentQuestion((prev) => (prev + 1) % questions.length);
-    setTimeLeft(INITIAL_TIME);
-    localStorage.setItem('timeLeft', INITIAL_TIME.toString());
-    localStorage.setItem('timerTimestamp', Date.now().toString());
-    setIsTimeout(false);
+    if (currentQuestion >= questions.length - 1) {
+      setCurrentQuestion(0);
+    } else {
+      setCurrentQuestion(currentQuestion + 1);
+    }
+    
     setShowAnswer(false);
     setSelectedAnswer(null);
     setVisibleHints([]);
-  };
 
-  const previousQuestion = () => {
-    setCurrentQuestion((prev) => (prev - 1 + questions.length) % questions.length);
-    resetQuestion();
-  };
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    // Scroll to top
+    questionContainerRef.current?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
   };
 
   const toggleTheme = () => {
@@ -249,7 +235,6 @@ function App() {
 
   React.useEffect(() => {
     const handleKeyboardNavigation = (e) => {
-      if (e.key === 'ArrowLeft') previousQuestion();
       if (e.key === 'ArrowRight') nextQuestion();
     };
 
@@ -257,88 +242,11 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyboardNavigation);
   }, []);
 
-  useEffect(() => {
-    if (!isPaused && timeLeft > 0 && !showAnswer) {
-      // Save current time and timestamp to localStorage
-      localStorage.setItem('timeLeft', timeLeft.toString());
-      localStorage.setItem('timerTimestamp', Date.now().toString());
-
-      const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          const newTime = prev <= 1 ? 0 : prev - 1;
-          if (newTime === 0) {
-            setIsTimeout(true);
-          }
-          // Update localStorage
-          localStorage.setItem('timeLeft', newTime.toString());
-          localStorage.setItem('timerTimestamp', Date.now().toString());
-          return newTime;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [timeLeft, isPaused, showAnswer]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const sidebar = document.querySelector('.sidebar');
-      const menuButton = document.querySelector('.mobile-menu-btn');
-      
-      if (isMobileMenuOpen && 
-          sidebar && 
-          !sidebar.contains(event.target) && 
-          !menuButton.contains(event.target)) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-    };
-  }, [isMobileMenuOpen]);
-
-  const TimeoutModal = ({ onRetry }) => (
-    <div className="timeout-modal">
-      <div className="timeout-content">
-        <h2>⏰ Time's Up!</h2>
-        <p>You ran out of time for this case.</p>
-        <div className="timeout-stats">
-          <div>Score: {score}</div>
-          <div>Streak: {streak}</div>
-        </div>
-        <div className="timeout-actions">
-          <button onClick={onRetry} className="retry-btn">
-            🔄 Try Again
-          </button>
-          <button onClick={() => nextQuestion()} className="next-btn">
-            ⏭️ Next Case
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   const handleRetry = () => {
-    setTimeLeft(INITIAL_TIME);
-    setIsTimeout(false);
     setShowAnswer(false);
     setSelectedAnswer(null);
     setVisibleHints([]);
-    localStorage.setItem('timeLeft', INITIAL_TIME.toString());
-    localStorage.setItem('timerTimestamp', Date.now().toString());
   };
-
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem('timeLeft');
-      localStorage.removeItem('timerTimestamp');
-    };
-  }, []);
 
   // Tách riêng Language Button thành component riêng và memo hóa
   const LanguageButton = memo(({ lang, isSelected, onSelect }) => (
@@ -428,21 +336,34 @@ function App() {
 
   const handleCategoryChange = (categoryId) => {
     setActiveCategory(categoryId);
-    // Optionally select the first language of the new category
-    const firstLangInCategory = programmingCategories
+    
+    // Kiểm tra xem ngôn ngữ hiện tại có thuộc category mới không
+    const currentCategoryLanguages = programmingCategories
       .find(cat => cat.id === categoryId)
-      ?.languages[0]?.id;
-    if (firstLangInCategory) {
-      setSelectedLanguage(firstLangInCategory);
+      ?.languages.map(lang => lang.id) || [];
+    
+    // Nếu ngôn ngữ hiện tại không thuộc category mới, chọn ngôn ngữ đầu tiên của category mới
+    if (!currentCategoryLanguages.includes(selectedLanguage)) {
+      const firstLangInCategory = programmingCategories
+        .find(cat => cat.id === categoryId)
+        ?.languages[0]?.id;
+      if (firstLangInCategory) {
+        setSelectedLanguage(firstLangInCategory);
+      }
     }
   };
 
+  // Thêm useEffect để lưu language và category khi thay đổi
+  useEffect(() => {
+    localStorage.setItem('selectedLanguage', selectedLanguage);
+  }, [selectedLanguage]);
+
+  useEffect(() => {
+    localStorage.setItem('activeCategory', activeCategory);
+  }, [activeCategory]);
+
   return (
     <div className="App">
-      <div className={`timer-display floating-control ${timeLeft < 30 ? 'warning' : ''}`}>
-        ⏱️ {formatTime(timeLeft)}
-      </div>
-
       <div className="theme-toggle">
         <button 
           className="theme-toggle-btn floating-control"
@@ -511,41 +432,18 @@ function App() {
               <span className="stat-label">Case Streak</span>
               <span className="stat-value">{streak} 🔥</span>
             </div>
-            <div className={`stat-item timer ${timeLeft < 30 ? 'warning' : ''}`}>
-              <span className="stat-label">Time Left</span>
-              <div className="timer-controls">
-                <span className="stat-value">⏱️ {formatTime(timeLeft)}</span>
-                <button 
-                  className="pause-btn"
-                  onClick={() => setIsPaused(!isPaused)}
-                  aria-label={isPaused ? 'Resume timer' : 'Pause timer'}
-                >
-                  {isPaused ? '▶️' : '⏸️'}
-                </button>
-              </div>
-            </div>
           </div>
         </div>
         
         <main className="main-content">
-          <div className="challenge-container">
+          <div className="challenge-container" ref={questionContainerRef}>
             <div className="navigation-buttons">
               <button 
-                className="nav-btn prev-btn" 
-                onClick={previousQuestion}
-                disabled={currentQuestion === 0}
-              >
-                <span className="icon">⬅️</span>
-                <span>Previous Case</span>
-              </button>
-
-              <button 
-                className="nav-btn next-btn" 
+                className={`floating-control nav-btn ${showAnswer ? 'answered' : ''}`}
                 onClick={nextQuestion}
-                disabled={currentQuestion === questions.length - 1}
+                aria-label="Next case"
               >
-                <span>Next Case</span>
-                <span className="icon">➡️</span>
+                <span className="icon">⏭️</span>
               </button>
             </div>
 
@@ -653,7 +551,6 @@ function App() {
                     <h4>🏆 Detective Rating</h4>
                     <ul>
                       <li>Base Score: {{'easy': 100, 'medium': 200, 'hard': 300}[selectedDifficulty]}</li>
-                      <li>Quick Thinking Bonus: +{Math.floor(timeLeft / 10)}</li>
                       <li>Case Streak Bonus: +{streak * 50}</li>
                       <li>Clue Usage Penalty: -{visibleHints.length * 25}</li>
                     </ul>
@@ -668,10 +565,6 @@ function App() {
                   🥚 "Elementary, my dear developer!" 🕵️‍♂️
                 </div>
               </div>
-            )}
-
-            {isTimeout && (
-              <TimeoutModal onRetry={handleRetry} />
             )}
           </div>
         </main>
