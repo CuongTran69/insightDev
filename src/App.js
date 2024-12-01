@@ -6,7 +6,10 @@ function App() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [visibleHints, setVisibleHints] = useState([]);
   const [score, setScore] = useState(0);
-  const [selectedDifficulty, setSelectedDifficulty] = useState('easy');
+  const [selectedDifficulty, setSelectedDifficulty] = useState(() => {
+    const savedDifficulty = localStorage.getItem('selectedDifficulty');
+    return savedDifficulty || 'easy';
+  });
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -152,6 +155,7 @@ function App() {
 
   const handleDifficultyChange = (difficulty) => {
     setSelectedDifficulty(difficulty);
+    localStorage.setItem('selectedDifficulty', difficulty);
     resetQuestion();
   };
 
