@@ -1217,14 +1217,6 @@ html {
   }
 }
 
-/* Theme Toggle Button */
-.theme-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1001;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .theme-toggle {
@@ -1255,23 +1247,6 @@ html {
   }
 }
 
-/* Common styles for floating controls */
-.floating-control {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: rgba(var(--bg-primary-rgb), 0.7);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(var(--card-border-rgb), 0.3);
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  opacity: 0.6;
-}
-
 .floating-control:hover {
   opacity: 1;
   background: var(--card-bg);
@@ -1300,18 +1275,6 @@ html {
   top: 1rem;
   right: 1rem;
   z-index: 1001;
-}
-
-.theme-toggle-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  color: var(--text-primary);
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
 }
 
 /* Add floating-control class to elements */
