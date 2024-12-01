@@ -1,0 +1,294 @@
+{
+    "questions": [
+      {
+        "id": 1,
+        "title": "Bí Ẩn Về Memory Leak",
+        "scenario": "Một ứng dụng iOS đang gặp vấn đề về memory leak.\nDev An nói về delegate pattern.\nQA Bình báo cáo về crash.",
+        "statements": [
+          "An: 'Tôi đã set delegate = nil trong deinit.'",
+          "Bình: 'App crash sau khi đóng màn hình 5 lần.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề memory leak?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "Kiểm tra cách implement delegate 🔍",
+          "Memory leak thường xảy ra do retain cycle 🔄",
+          "Delegate property cần được đánh dấu weak 💡"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ An nói thật" },
+          { "id": 3, "text": "Chỉ Bình nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 3,
+        "explanation": {
+          "logic": "Bình nói thật vì crash do memory leak là hiện tượng phổ biến. An nói dối vì chỉ set delegate = nil thôi chưa đủ, cần khai báo delegate là weak reference.",
+          "technicalDetails": "Trong Swift, delegate pattern cần được khai báo là weak để tránh retain cycle: weak var delegate: ProtocolName?"
+        }
+      },
+      {
+        "id": 2,
+        "title": "Màn Hình Trắng Bí Ẩn",
+        "scenario": "User báo cáo màn hình trắng khi mở app.\nDev Cường vừa thêm splash screen.\nTester Dung kiểm tra trên nhiều thiết bị.",
+        "statements": [
+          "Cường: 'Splash screen hoạt động tốt trên simulator.'",
+          "Dung: 'Lỗi chỉ xuất hiện trên iOS 14 trở lên.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề màn hình trắng?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "Kiểm tra LaunchScreen.storyboard 📱",
+          "Xem xét Info.plist configuration ⚙️",
+          "iOS version compatibility là quan trọng 🔍"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Cường nói thật" },
+          { "id": 3, "text": "Chỉ Dung nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 2,
+        "explanation": {
+          "logic": "Cường nói thật vì splash screen thường hoạt động tốt trên simulator. Dung nói dối vì vấn đề màn hình trắng thường không liên quan đến phiên bản iOS cụ thể.",
+          "technicalDetails": "Màn hình trắng thường do thiếu configuration trong Info.plist hoặc LaunchScreen.storyboard không được set up đúng."
+        }
+      },
+      {
+        "id": 3,
+        "title": "Auto Layout Gone Wrong",
+        "scenario": "App hiển thị lỗi layout trên iPhone SE.\nDev Em vừa update constraints.\nQA Fong test trên nhiều device.",
+        "statements": [
+          "Em: 'Tôi đã set constraints relative to margins.'",
+          "Fong: 'Layout vẫn đẹp trên iPhone 14 Pro Max.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề layout?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "Safe area và margins khác nhau 📏",
+          "iPhone SE có kích thước màn hình nhỏ 📱",
+          "Constraints cần linh hoạt với mọi size 🔄"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Em nói thật" },
+          { "id": 3, "text": "Chỉ Fong nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Cả hai đều nói thật. Layout có thể hoạt động tốt trên màn hình lớn (iPhone 14 Pro Max) nhưng gặp vấn đề trên màn hình nhỏ (iPhone SE) dù đã set margins.",
+          "technicalDetails": "Cần sử dụng kết hợp safe area, margins và dynamic constraints để layout work trên mọi kích thước màn hình."
+        }
+      },
+      {
+        "id": 4,
+        "title": "Network Call Mystery",
+        "scenario": "App không load được data từ API.\nDev Giang vừa update network layer.\nDevOps Hùng kiểm tra server status.",
+        "statements": [
+          "Giang: 'URLSession configuration đã được set up đúng.'",
+          "Hùng: 'Server đang hoạt động bình thường.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề network?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "Kiểm tra ATS settings trong Info.plist 🔒",
+          "Test API endpoint bằng Postman 🚀",
+          "URLSession cần proper configuration 🛠️"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Giang nói thật" },
+          { "id": 3, "text": "Chỉ Hùng nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 3,
+        "explanation": {
+          "logic": "Hùng nói thật vì server status có thể kiểm tra được. Giang nói dối vì vấn đề thường nằm ở ATS configuration trong Info.plist.",
+          "technicalDetails": "App Transport Security (ATS) requirements cần được configure đúng để cho phép network calls trong iOS."
+        }
+      },
+      {
+        "id": 5,
+        "title": "Core Data Confusion",
+        "scenario": "Data không được lưu vào local database.\nDev Inh làm việc với Core Data.\nQA Kiên test chức năng save.",
+        "statements": [
+          "Inh: 'Tôi đã gọi saveContext() sau khi update.'",
+          "Kiên: 'Data biến mất khi restart app.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề Core Data?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "Core Data requires proper context management 💾",
+          "Check persistence container setup 📦",
+          "SaveContext cần được gọi đúng thời điểm ⏱️"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Inh nói thật" },
+          { "id": 3, "text": "Chỉ Kiên nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Cả hai đều nói thật. Có thể saveContext() được gọi nhưng persistent store coordinator không được setup đúng.",
+          "technicalDetails": "Core Data cần proper setup của NSPersistentContainer và proper handling của managed object context."
+        }
+      },
+      {
+        "id": 6,
+        "title": "Push Notification Drama",
+        "scenario": "Push notifications không hoạt động trên production.\nDev Lan setup APNS.\nDevOps Minh kiểm tra certificates.",
+        "statements": [
+          "Lan: 'Device token được gửi lên server thành công.'",
+          "Minh: 'Production certificate đã được update.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề push notification?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "Check APNS environment (sandbox vs production) 🔄",
+          "Verify push notification entitlements 📝",
+          "Device token registration process 📱"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Lan nói thật" },
+          { "id": 3, "text": "Chỉ Minh nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 2,
+        "explanation": {
+          "logic": "Lan nói thật vì device token registration có thể verify được. Minh nói dối vì vấn đề thường nằm ở certificate không match với environment.",
+          "technicalDetails": "APNS requires correct certificate type (development vs production) và proper entitlements trong project."
+        }
+      },
+      {
+        "id": 7,
+        "title": "UITableView Refresh Bug",
+        "scenario": "UITableView không update sau khi thêm data.\nDev Nam implement refresh logic.\nQA Oanh test user interaction.",
+        "statements": [
+          "Nam: 'reloadData() được gọi trên main thread.'",
+          "Oanh: 'Cell hiển thị sai sau khi pull to refresh.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề UITableView?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "UI updates must be on main thread 🧵",
+          "Check data source array management 📊",
+          "TableView delegate methods implementation 📱"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Nam nói thật" },
+          { "id": 3, "text": "Chỉ Oanh nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 3,
+        "explanation": {
+          "logic": "Oanh nói thật vì cell display issues có thể quan sát được. Nam nói dối vì dù reloadData() được gọi trên main thread, data source array có thể không được update đúng.",
+          "technicalDetails": "UITableView cần proper synchronization giữa data source và UI updates."
+        }
+      },
+      {
+        "id": 8,
+        "title": "Image Cache Mystery",
+        "scenario": "Images load chậm và consume nhiều memory.\nDev Phương implement image caching.\nQA Quân test performance.",
+        "statements": [
+          "Phương: 'NSCache được sử dụng cho image caching.'",
+          "Quân: 'Memory usage tăng liên tục khi scroll.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề image caching?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "NSCache vs Dictionary for caching 🗄️",
+          "Memory warning handling ⚠️",
+          "Image resizing before caching 🖼️"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Phương nói thật" },
+          { "id": 3, "text": "Chỉ Quân nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Cả hai đều nói thật. NSCache được sử dụng nhưng có thể chưa implement proper memory warning handling.",
+          "technicalDetails": "Image caching cần kết hợp NSCache với proper memory management và image resizing."
+        }
+      },
+      {
+        "id": 9,
+        "title": "UserDefaults Sync Issue",
+        "scenario": "Settings không được lưu giữa các lần mở app.\nDev Rong làm việc với UserDefaults.\nQA Sơn test app state.",
+        "statements": [
+          "Rong: 'UserDefaults.standard.synchronize() được gọi sau mỗi lần save.'",
+          "Sơn: 'Settings reset sau khi force close app.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề UserDefaults?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "synchronize() không còn cần thiết trong iOS mới 📝",
+          "Check key names trong UserDefaults 🔑",
+          "App lifecycle và data persistence 🔄"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Rong nói thật" },
+          { "id": 3, "text": "Chỉ Sơn nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 3,
+        "explanation": {
+          "logic": "Sơn nói thật vì settings reset có thể verify được. Rong nói dối vì synchronize() không còn cần thiết trong iOS mới và có thể gây performance issues.",
+          "technicalDetails": "UserDefaults tự động synchronize trong iOS mới, không cần gọi method synchronize() nữa."
+        }
+      },
+      {
+        "id": 10,
+        "title": "Animation Timing Bug",
+        "scenario": "UIView animation không mượt.\nDev Tùng update animation code.\nQA Uyên test trên các device.",
+        "statements": [
+          "Tùng: 'Animation duration được set chính xác.'",
+          "Uyên: 'Animation lag trên iPhone đời cũ.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề animation?",
+        "difficulty": "easy",
+        "language": "swift",
+        "category": "mobile",
+        "hints": [
+          "Check animation timing function ⏱️",
+          "Device performance considerations 📱",
+          "Main thread và animation 🧵"
+        ],
+        "answers": [
+          { "id": 1, "text": "Cả hai đều nói thật" },
+          { "id": 2, "text": "Chỉ Tùng nói thật" },
+          { "id": 3, "text": "Chỉ Uyên nói thật" },
+          { "id": 4, "text": "Cả hai đều nói dối" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Cả hai đều nói thật. Duration có thể đúng nhưng animation vẫn lag trên device cũ do performance issues.",
+          "technicalDetails": "UIView animations cần consider device performance và proper timing function selection."
+        }
+      }
+    ]
+  }

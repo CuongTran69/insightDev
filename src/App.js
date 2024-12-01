@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './App.css';
 import { memo } from 'react';
+import questionsData from './data/questions.json';
 
 function App() {
   const [showAnswer, setShowAnswer] = useState(false);
@@ -30,41 +31,7 @@ function App() {
   const questionContainerRef = useRef(null);
 
   // Sample detective puzzle
-  const questions = [
-    {
-      id: 1,
-      title: "The Case of the Missing Semicolon",
-      scenario: `Team Lead Sarah reports a production bug.
-                Junior Dev Tom claims he tested everything.
-                DevOps Alex mentions recent deployment changes.`,
-      statements: [
-        "Sarah: 'The bug only appears in production, not in staging.'",
-        "Tom: 'I ran all tests before pushing the code.'",
-        "Alex: 'We didn't change any deployment configs recently.'"
-      ],
-      question: "Who is telling the truth about the production bug?",
-      difficulty: 'easy',
-      category: '🏗️ Backend',
-      hints: [
-        "Check the git logs for recent deployment changes",
-        "Compare test environment variables between staging and production",
-        "One person is lying about their involvement 🕵️‍♂️"
-      ],
-      answers: [
-        { id: 1, text: "Sarah is telling the truth" },
-        { id: 2, text: "Tom is telling the truth" },
-        { id: 3, text: "Alex is telling the truth" },
-        { id: 4, text: "Everyone is lying" }
-      ],
-      correctAnswer: 1,
-      explanation: {
-        logic: "Sarah is telling the truth because staging and production environments often have different configurations. Tom might think he tested everything but missed environment-specific cases. Alex's statement about deployment configs can be disproven by git logs.",
-        technicalDetails: "This case highlights the importance of environment parity and thorough testing across different environments.",
-        meme: "semicolon-bug-meme.gif"
-      }
-    }
-    // Add more detective cases here
-  ];
+  const questions = questionsData.questions;
 
   // Update programming languages data structure
   const programmingCategories = [
@@ -136,7 +103,20 @@ function App() {
     }
   ];
 
-  const currentCase = questions[currentQuestion];
+  // Thêm useMemo để lọc câu hỏi theo ngôn ngữ và độ khó
+  const filteredQuestions = useMemo(() => {
+    return questionsData.questions.filter(question => 
+      question.language === selectedLanguage && 
+      question.difficulty === selectedDifficulty
+    );
+  }, [selectedLanguage, selectedDifficulty]);
+
+  // Cập nhật state để theo dõi index của câu hỏi trong danh sách đã lọc
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  // Lấy câu hỏi hiện tại từ danh sách đã lọc
+  const currentCase = filteredQuestions[currentQuestionIndex];
+
   const hints = currentCase?.hints || [];
   const answers = currentCase?.answers || [];
 
@@ -207,21 +187,13 @@ function App() {
   };
 
   const nextQuestion = () => {
-    if (currentQuestion >= questions.length - 1) {
-      setCurrentQuestion(0);
+    if (currentQuestionIndex < filteredQuestions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      setCurrentQuestion(currentQuestion + 1);
+      // Quay lại câu hỏi đầu tiên nếu đã hết
+      setCurrentQuestionIndex(0);
     }
-    
-    setShowAnswer(false);
-    setSelectedAnswer(null);
-    setVisibleHints([]);
-
-    // Scroll to top
-    questionContainerRef.current?.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
-    });
+    resetQuestion();
   };
 
   const toggleTheme = () => {
@@ -424,6 +396,23 @@ function App() {
     return null;
   }, [selectedLanguage]);
 
+  // Thêm useEffect để reset currentQuestionIndex khi đổi ngôn ngữ hoặc độ khó
+  useEffect(() => {
+    setCurrentQuestionIndex(0);
+    resetQuestion();
+  }, [selectedLanguage, selectedDifficulty]);
+
+  // Thêm thông báo khi không có câu hỏi cho ngôn ngữ/độ khó đã chọn
+  const NoQuestionsMessage = () => (
+    <div className="no-questions-message">
+      <h3>🔍 No Cases Available</h3>
+      <p>There are currently no cases for {getCurrentLanguageInfo?.language.name} at {selectedDifficulty} level.</p>
+      <p>Try selecting a different language or difficulty level.</p>
+    </div>
+  );
+
+  const totalQuestions = filteredQuestions.length;
+
   return (
     <div className="App">
       <div className="theme-toggle">
@@ -496,141 +485,150 @@ function App() {
         </div>
         
         <main className="main-content">
-          <div className="challenge-container" ref={questionContainerRef}>
-            <div className="navigation-buttons">
-              <button 
-                className={`floating-control nav-btn ${showAnswer ? 'answered' : ''}`}
-                onClick={nextQuestion}
-                aria-label="Next case"
-              >
-                <span className="icon">⏭️</span>
-              </button>
-            </div>
+          {filteredQuestions.length > 0 ? (
+            <div className="challenge-container" ref={questionContainerRef}>
+              <div className="navigation-buttons">
+                <button 
+                  className={`floating-control nav-btn ${showAnswer ? 'answered' : ''}`}
+                  onClick={nextQuestion}
+                  aria-label="Next case"
+                >
+                  <span className="icon">⏭️</span>
+                </button>
+              </div>
 
-            <div className="challenge-header">
-              <div className="title-section">
-                <h2 className="challenge-title">{currentCase?.title}</h2>
-                <div className="case-meta">
-                  <div className={`difficulty-badge ${selectedDifficulty}`}>
-                    {selectedDifficulty}
-                  </div>
-                  <div className="category-badge">
-                    {getCurrentLanguageInfo ? (
-                      <>
-                        {getCurrentLanguageInfo.category.icon} {getCurrentLanguageInfo.language.name}
-                      </>
-                    ) : '🏗️ Backend'}
+              <div className="challenge-header">
+                <div className="title-section">
+                  {totalQuestions > 0 && (
+                    <div className="question-counter">
+                      Câu {currentQuestionIndex + 1}/{totalQuestions}:
+                    </div>
+                  )}
+                  <h2 className="challenge-title">{currentCase?.title}</h2>
+                  <div className="case-meta">
+                    <div className={`difficulty-badge ${selectedDifficulty}`}>
+                      {selectedDifficulty}
+                    </div>
+                    <div className="category-badge">
+                      {getCurrentLanguageInfo ? (
+                        <>
+                          {getCurrentLanguageInfo.category.icon} {getCurrentLanguageInfo.language.name}
+                        </>
+                      ) : '🏗️ Backend'}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="case-file">
-              <div className="scenario-section">
-                <h3>📁 Case Background</h3>
-                <p>{currentCase?.scenario}</p>
+              
+              <div className="case-file">
+                <div className="scenario-section">
+                  <h3>📁 Case Background</h3>
+                  <p>{currentCase?.scenario}</p>
+                </div>
+
+                <div className="statements-section">
+                  <h3>🗣️ Statements</h3>
+                  <div className="statements-list">
+                    {currentCase?.statements.map((statement, index) => (
+                      <div key={index} className="statement-item">
+                        {statement}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="question-section">
+                  <h3>❓ Detective's Task</h3>
+                  <p>{currentCase?.question}</p>
+                </div>
               </div>
 
-              <div className="statements-section">
-                <h3>🗣️ Statements</h3>
-                <div className="statements-list">
-                  {currentCase?.statements.map((statement, index) => (
-                    <div key={index} className="statement-item">
-                      {statement}
+              <div className="hints-section">
+                <h3>🔍 Investigation Notes</h3>
+                <div className="hints-grid">
+                  {hints.map((hint, index) => (
+                    <div key={index} className="hint-card">
+                      <button 
+                        className={`hint-toggle ${visibleHints.includes(index) ? 'active' : ''}`}
+                        onClick={() => toggleHint(index)}
+                      >
+                        <span className="hint-number">Clue #{index + 1}</span>
+                        <span className="icon"></span>
+                      </button>
+                      {visibleHints.includes(index) && (
+                        <div className="hint-content">
+                          {hint}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="question-section">
-                <h3>❓ Detective's Task</h3>
-                <p>{currentCase?.question}</p>
-              </div>
-            </div>
-
-            <div className="hints-section">
-              <h3>🔍 Investigation Notes</h3>
-              <div className="hints-grid">
-                {hints.map((hint, index) => (
-                  <div key={index} className="hint-card">
-                    <button 
-                      className={`hint-toggle ${visibleHints.includes(index) ? 'active' : ''}`}
-                      onClick={() => toggleHint(index)}
+              <div className="answers-section">
+                <h3>🎯 Your Deduction</h3>
+                <div className="answers-grid">
+                  {answers.map(answer => (
+                    <div 
+                      key={answer.id} 
+                      className={`answer-card 
+                        ${selectedAnswer === answer.id ? 'selected' : ''} 
+                        ${showAnswer && answer.id === currentCase.correctAnswer ? 'correct' : ''}
+                        ${showAnswer && selectedAnswer === answer.id && answer.id !== currentCase.correctAnswer ? 'incorrect' : ''}`}
+                      onClick={() => handleAnswerSelect(answer.id)}
                     >
-                      <span className="hint-number">Clue #{index + 1}</span>
-                      <span className="icon"></span>
-                    </button>
-                    {visibleHints.includes(index) && (
-                      <div className="hint-content">
-                        {hint}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="answers-section">
-              <h3>🎯 Your Deduction</h3>
-              <div className="answers-grid">
-                {answers.map(answer => (
-                  <div 
-                    key={answer.id} 
-                    className={`answer-card 
-                      ${selectedAnswer === answer.id ? 'selected' : ''} 
-                      ${showAnswer && answer.id === currentCase.correctAnswer ? 'correct' : ''}
-                      ${showAnswer && selectedAnswer === answer.id && answer.id !== currentCase.correctAnswer ? 'incorrect' : ''}`}
-                    onClick={() => handleAnswerSelect(answer.id)}
-                  >
-                    <div className="answer-text">{answer.text}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="action-buttons">
-              <button 
-                className="check-answer-btn"
-                onClick={checkAnswer}
-                disabled={!selectedAnswer || showAnswer}
-              >
-                <span className="icon">🔍</span>
-                Submit Deduction
-              </button>
-            </div>
-
-            {showAnswer && (
-              <div className="solution-panel">
-                <h3 className="solution-title">📋 Case Solved!</h3>
-                <div className="solution-content">
-                  <div className="explanation-section">
-                    <h4>🧩 Logic Behind the Case</h4>
-                    <p>{currentCase.explanation.logic}</p>
-                    
-                    <h4>💻 Technical Analysis</h4>
-                    <p>{currentCase.explanation.technicalDetails}</p>
-                  </div>
-
-                  <div className="score-breakdown">
-                    <h4>🏆 Detective Rating</h4>
-                    <ul>
-                      <li>Base Score: {{'easy': 100, 'medium': 200, 'hard': 300}[selectedDifficulty]}</li>
-                      <li>Case Streak Bonus: +{streak * 50}</li>
-                      <li>Clue Usage Penalty: -{visibleHints.length * 25}</li>
-                    </ul>
-                  </div>
+                      <div className="answer-text">{answer.text}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            )}
 
-            {showEasterEgg && (
-              <div className="easter-egg">
-                <div className="egg-content">
-                  🥚 "Elementary, my dear developer!" 🕵️‍♂️
-                </div>
+              <div className="action-buttons">
+                <button 
+                  className="check-answer-btn"
+                  onClick={checkAnswer}
+                  disabled={!selectedAnswer || showAnswer}
+                >
+                  <span className="icon">🔍</span>
+                  Submit Deduction
+                </button>
               </div>
-            )}
-          </div>
+
+              {showAnswer && (
+                <div className="solution-panel">
+                  <h3 className="solution-title">📋 Case Solved!</h3>
+                  <div className="solution-content">
+                    <div className="explanation-section">
+                      <h4>🧩 Logic Behind the Case</h4>
+                      <p>{currentCase.explanation.logic}</p>
+                      
+                      <h4>💻 Technical Analysis</h4>
+                      <p>{currentCase.explanation.technicalDetails}</p>
+                    </div>
+
+                    <div className="score-breakdown">
+                      <h4>🏆 Detective Rating</h4>
+                      <ul>
+                        <li>Base Score: {{'easy': 100, 'medium': 200, 'hard': 300}[selectedDifficulty]}</li>
+                        <li>Case Streak Bonus: +{streak * 50}</li>
+                        <li>Clue Usage Penalty: -{visibleHints.length * 25}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {showEasterEgg && (
+                <div className="easter-egg">
+                  <div className="egg-content">
+                    🥚 "Elementary, my dear developer!" 🕵️‍♂️
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <NoQuestionsMessage />
+          )}
         </main>
       </div>
     </div>
