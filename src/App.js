@@ -362,6 +362,20 @@ function App() {
     localStorage.setItem('activeCategory', activeCategory);
   }, [activeCategory]);
 
+  // Thêm hàm để lấy thông tin ngôn ngữ hiện tại
+  const getCurrentLanguageInfo = useMemo(() => {
+    for (const category of programmingCategories) {
+      const lang = category.languages.find(l => l.id === selectedLanguage);
+      if (lang) {
+        return {
+          language: lang,
+          category: category
+        };
+      }
+    }
+    return null;
+  }, [selectedLanguage]);
+
   return (
     <div className="App">
       <div className="theme-toggle">
@@ -455,7 +469,11 @@ function App() {
                     {selectedDifficulty}
                   </div>
                   <div className="category-badge">
-                    {currentCase?.category}
+                    {getCurrentLanguageInfo ? (
+                      <>
+                        {getCurrentLanguageInfo.category.icon} {getCurrentLanguageInfo.language.name}
+                      </>
+                    ) : '🏗️ Backend'}
                   </div>
                 </div>
               </div>
