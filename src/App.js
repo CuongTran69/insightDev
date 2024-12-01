@@ -302,38 +302,82 @@ function App() {
     );
   });
 
-  // Update LanguageSelector component
-  const LanguageSelector = memo(({ 
+  // Tách Modal thành component riêng
+  const LanguageModal = memo(({ 
+    isOpen, 
+    onClose, 
+    categories, 
     selectedLanguage, 
-    activeCategory,
-    onLanguageSelect,
-    onCategoryChange 
+    onLanguageSelect 
+  }) => (
+    <div className={`language-modal-overlay ${isOpen ? 'active' : ''}`} onClick={onClose}>
+      <div className="language-modal" onClick={e => e.stopPropagation()}>
+        <div className="language-modal-header">
+          <h3 className="language-modal-title">Select Programming Language</h3>
+          <button className="close-modal-btn" onClick={onClose}>✕</button>
+        </div>
+        
+        {categories.map(category => (
+          <div key={category.id} className="language-category">
+            <div className="language-category-title">
+              <span>{category.icon}</span>
+              <span>{category.name}</span>
+            </div>
+            <div className="language-grid">
+              {category.languages.map(lang => (
+                <LanguageButton
+                  key={lang.id}
+                  lang={lang}
+                  isSelected={selectedLanguage === lang.id}
+                  onSelect={(langId) => {
+                    onLanguageSelect(langId);
+                    onClose();
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ));
+
+  // Cập nhật LanguageSelector
+  const LanguageSelector = memo(({ 
+    selectedLanguage,
+    onLanguageSelect
   }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    // Lấy thông tin ngôn ngữ hiện tại
+    const currentLang = useMemo(() => {
+      for (const category of programmingCategories) {
+        const lang = category.languages.find(l => l.id === selectedLanguage);
+        if (lang) return lang;
+      }
+      return null;
+    }, [selectedLanguage]);
+
     return (
       <div className="language-selector">
-        <div className="category-tabs">
-          {programmingCategories.map(category => (
-            <CategoryTab
-              key={category.id}
-              category={category}
-              isActive={activeCategory === category.id}
-              onClick={onCategoryChange}
-            />
-          ))}
-        </div>
+        <button 
+          className="selected-language-btn"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <div className="selected-language-info">
+            <span className="language-icon">{currentLang?.icon}</span>
+            <span className="language-name">{currentLang?.name}</span>
+          </div>
+          <span className="language-selector-arrow">▼</span>
+        </button>
 
-        <div className="language-grid">
-          {programmingCategories
-            .find(cat => cat.id === activeCategory)
-            ?.languages.map(lang => (
-              <LanguageButton
-                key={lang.id}
-                lang={lang}
-                isSelected={selectedLanguage === lang.id}
-                onSelect={onLanguageSelect}
-              />
-            ))}
-        </div>
+        <LanguageModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          categories={programmingCategories}
+          selectedLanguage={selectedLanguage}
+          onLanguageSelect={onLanguageSelect}
+        />
       </div>
     );
   });
@@ -416,9 +460,7 @@ function App() {
           <div className="profile-section">
             <LanguageSelector 
               selectedLanguage={selectedLanguage}
-              activeCategory={activeCategory}
               onLanguageSelect={setSelectedLanguage}
-              onCategoryChange={handleCategoryChange}
             />
 
             <div className="difficulty-selector">

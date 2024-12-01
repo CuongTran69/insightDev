@@ -1662,3 +1662,107 @@ body {
   background-color: #1e1e1e;
   min-height: 100vh;
 }
+
+/* Language Selector Modal */
+.language-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.language-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.language-modal {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.language-modal-overlay.active .language-modal {
+  transform: translateY(0);
+}
+
+.language-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.language-modal-title {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.language-category {
+  margin-bottom: 1.5rem;
+}
+
+.language-category-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* Thay đổi button chọn ngôn ngữ */
+.selected-language-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.selected-language-btn:hover {
+  background: var(--hover-bg);
+  transform: translateY(-2px);
+}
+
+.selected-language-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.language-selector-arrow {
+  opacity: 0.5;
+}
