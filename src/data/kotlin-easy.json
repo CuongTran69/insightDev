@@ -1,0 +1,294 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "title": "Vụ Án Màn Hình Trắng",
+      "scenario": "Một ứng dụng Android bị crash khi mở màn hình chính.\nDev Minh phụ trách UI.\nQA Hương làm testing.\nLead Tuấn review code.",
+      "statements": [
+        "Minh: 'Activity của tôi đã handle đầy đủ lifecycle rồi.'",
+        "Hương: 'App chạy bình thường trên máy test của tôi.'",
+        "Tuấn: 'Tôi thấy không có gọi super.onCreate() trong Activity.'"
+      ],
+      "question": "Ai đang nói thật về nguyên nhân crash?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Kiểm tra logcat khi app crash 🔍",
+        "onCreate() là method quan trọng trong Activity lifecycle",
+        "Thử chạy app trên nhiều device khác nhau"
+      ],
+      "answers": [
+        { "id": 1, "text": "Minh nói thật" },
+        { "id": 2, "text": "Hương nói thật" },
+        { "id": 3, "text": "Tuấn nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Tuấn nói thật vì thiếu super.onCreate() sẽ gây crash app. Minh nói không đúng về handle lifecycle. Hương có thể đã test trên version cũ.",
+        "technicalDetails": "super.onCreate() là bắt buộc trong Activity, nếu không gọi sẽ gây crash khi khởi tạo view hierarchy."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Bí Ẩn Tràn Bộ Nhớ",
+      "scenario": "App bị OutOfMemoryError sau vài phút sử dụng.\nDev An làm phần load ảnh.\nQA Mai test performance.\nLead Đức review memory usage.",
+      "statements": [
+        "An: 'Tôi đã dùng Glide để load tất cả ảnh.'",
+        "Mai: 'Memory usage tăng đều, không có spike bất thường.'",
+        "Đức: 'Có memory leak trong RecyclerView Adapter.'"
+      ],
+      "question": "Ai đang nói đúng về vấn đề memory?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Kiểm tra cách giải phóng ViewHolder trong Adapter",
+        "Glide tự động manage memory cache",
+        "Sử dụng Android Profiler để theo dõi memory"
+      ],
+      "answers": [
+        { "id": 1, "text": "An nói thật" },
+        { "id": 2, "text": "Mai nói thật" },
+        { "id": 3, "text": "Đức nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Đức nói thật vì memory leak trong RecyclerView Adapter là nguyên nhân phổ biến gây OOM. An dùng Glide nhưng có thể implement sai. Mai không phát hiện được leak.",
+        "technicalDetails": "RecyclerView Adapter cần clear references trong onViewRecycled() để tránh memory leak."
+      }
+    },
+    {
+      "id": 3,
+      "title": "Загадка Mất Dữ Liệu",
+      "scenario": "App bị mất data sau khi rotate màn hình.\nDev Linh làm feature lưu state.\nQA Tùng test rotation.\nLead Nam review architecture.",
+      "statements": [
+        "Linh: 'Tôi đã lưu data vào Bundle trong onSaveInstanceState.'",
+        "Tùng: 'Rotation hoạt động tốt trên Android 11.'",
+        "Nam: 'ViewModel không được sử dụng đúng cách.'"
+      ],
+      "question": "Ai nói thật về việc handle configuration changes?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "ViewModel tự survive qua configuration changes",
+        "Bundle có giới hạn kích thước data",
+        "Test rotation trên nhiều Android version"
+      ],
+      "answers": [
+        { "id": 1, "text": "Linh nói thật" },
+        { "id": 2, "text": "Tùng nói thật" },
+        { "id": 3, "text": "Nam nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Nam nói thật vì không sử dụng ViewModel đúng cách sẽ gây mất data. Linh dùng Bundle không phải giải pháp tối ưu. Tùng test chưa đủ các version.",
+        "technicalDetails": "ViewModel được thiết kế để giữ UI data qua configuration changes, không cần dùng onSaveInstanceState cho data lớn."
+      }
+    },
+    {
+      "id": 4,
+      "title": "Vụ Án Notification Biến Mất",
+      "scenario": "Notification không hiển thị trên Android 13.\nDev Hà implement notification.\nQA Dũng test notification.\nLead Thảo review permissions.",
+      "statements": [
+        "Hà: 'Tôi đã thêm đầy đủ code hiển thị notification.'",
+        "Dũng: 'Notification hoạt động tốt trên Android 12.'",
+        "Thảo: 'Thiếu runtime permission cho notification từ Android 13.'"
+      ],
+      "question": "Ai nói thật về vấn đề notification?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Android 13 yêu cầu POST_NOTIFICATIONS permission",
+        "Check AndroidManifest.xml cho permissions",
+        "Test notification trên các Android version khác nhau"
+      ],
+      "answers": [
+        { "id": 1, "text": "Hà nói thật" },
+        { "id": 2, "text": "Dũng nói thật" },
+        { "id": 3, "text": "Thảo nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Thảo nói thật vì Android 13 bắt buộc có runtime permission cho notifications. Hà chưa implement đầy đủ. Dũng test đúng nhưng chưa đủ.",
+        "technicalDetails": "Từ Android 13 (API 33), POST_NOTIFICATIONS permission là bắt buộc và phải được request runtime."
+      }
+    },
+    {
+      "id": 5,
+      "title": "Bí Ẩn Layout Vỡ",
+      "scenario": "UI bị vỡ trên một số điện thoại.\nDev Phương làm UI.\nQA Hoàng test compatibility.\nLead Việt review layouts.",
+      "statements": [
+        "Phương: 'Tôi đã dùng ConstraintLayout cho tất cả màn hình.'",
+        "Hoàng: 'UI hiển thị đẹp trên Pixel devices.'",
+        "Việt: 'Layout đang dùng hardcoded dimensions.'"
+      ],
+      "question": "Ai nói thật về vấn đề layout?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check layout files cho hardcoded values",
+        "ConstraintLayout không đảm bảo UI không bị vỡ",
+        "Test trên nhiều screen sizes và densities"
+      ],
+      "answers": [
+        { "id": 1, "text": "Phương nói thật" },
+        { "id": 2, "text": "Hoàng nói thật" },
+        { "id": 3, "text": "Việt nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Việt nói thật vì hardcoded dimensions sẽ gây vỡ UI trên các màn hình khác nhau. Phương dùng ConstraintLayout nhưng implement chưa đúng. Hoàng test chưa đủ devices.",
+        "technicalDetails": "Nên sử dụng dp, sp và dimension resources thay vì hardcoded pixels để support nhiều màn hình."
+      }
+    },
+    {
+      "id": 6,
+      "title": "Vụ Án Crash Đột Ngột",
+      "scenario": "App crash khi click nút share.\nDev Tâm làm feature share.\nQA Nga test functionality.\nLead Sơn review error handling.",
+      "statements": [
+        "Tâm: 'Tôi đã check null trước khi share.'",
+        "Nga: 'Feature share hoạt động tốt trên máy tôi.'",
+        "Sơn: 'Không có try-catch block trong code share.'"
+      ],
+      "question": "Ai nói thật về nguyên nhân crash?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "ActivityNotFoundException có thể xảy ra khi share",
+        "Null check không đủ để prevent tất cả crashes",
+        "Test trên device không có apps để handle share"
+      ],
+      "answers": [
+        { "id": 1, "text": "Tâm nói thật" },
+        { "id": 2, "text": "Nga nói thật" },
+        { "id": 3, "text": "Sơn nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Sơn nói thật vì thiếu try-catch sẽ gây crash khi không có app để handle share intent. Tâm chỉ check null là chưa đủ. Nga test trên device có đủ apps.",
+        "technicalDetails": "Share functionality cần handle ActivityNotFoundException và các exceptions khác có thể xảy ra."
+      }
+    },
+    {
+      "id": 7,
+      "title": "Bí Ẩn Battery Drain",
+      "scenario": "App tiêu tốn pin bất thường.\nDev Quân làm background tasks.\nQA Hằng test performance.\nLead Trung review services.",
+      "statements": [
+        "Quân: 'Tôi đã dùng WorkManager cho tất cả tasks.'",
+        "Hằng: 'Battery usage bình thường trong 1 giờ test.'",
+        "Trung: 'Có một ForegroundService chạy liên tục.'"
+      ],
+      "question": "Ai nói thật về vấn đề pin?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check Service lifecycle trong code",
+        "WorkManager tối ưu cho battery life",
+        "Test battery usage trong thời gian dài hơn"
+      ],
+      "answers": [
+        { "id": 1, "text": "Quân nói thật" },
+        { "id": 2, "text": "Hằng nói thật" },
+        { "id": 3, "text": "Trung nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Trung nói thật vì ForegroundService chạy liên tục sẽ tốn pin. Quân chưa chuyển hết tasks sang WorkManager. Hằng test chưa đủ thời gian.",
+        "technicalDetails": "ForegroundService nên được stop khi không cần thiết, WorkManager là lựa chọn tốt hơn cho background tasks."
+      }
+    },
+    {
+      "id": 8,
+      "title": "Vụ Án Mất Kết Nối",
+      "scenario": "App không update data khi có Internet trở lại.\nDev Bình làm network handling.\nQA Lan test connectivity.\nLead Cường review implementation.",
+      "statements": [
+        "Bình: 'Tôi đã check Internet bằng ConnectivityManager.'",
+        "Lan: 'App update data ngay khi bật Wifi.'",
+        "Cường: 'Không có broadcast receiver cho network changes.'"
+      ],
+      "question": "Ai nói thật về vấn đề connectivity?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check cách register network callback",
+        "ConnectivityManager.NetworkCallback là recommended approach",
+        "Test với airplane mode và different network states"
+      ],
+      "answers": [
+        { "id": 1, "text": "Bình nói thật" },
+        { "id": 2, "text": "Lan nói thật" },
+        { "id": 3, "text": "Cường nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Cường nói thật vì thiếu broadcast receiver sẽ không detect được network changes. Bình chỉ check Internet là chưa đủ. Lan test chưa đúng scenarios.",
+        "technicalDetails": "Cần implement NetworkCallback hoặc broadcast receiver để handle network state changes properly."
+      }
+    },
+    {
+      "id": 9,
+      "title": "Bí Ẩn Permission Loop",
+      "scenario": "App liên tục xin camera permission.\nDev Thành làm camera feature.\nQA Yến test permissions.\nLead Huy review permission flow.",
+      "statements": [
+        "Thành: 'Tôi đã check permission trước khi mở camera.'",
+        "Yến: 'Permission flow hoạt động tốt khi allow.'",
+        "Huy: 'Không lưu trạng thái permission đã deny.'"
+      ],
+      "question": "Ai nói thật về vấn đề permission?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check cách handle permission result",
+        "SharedPreferences có thể dùng để lưu permission state",
+        "Test với các trường hợp deny và don't ask again"
+      ],
+      "answers": [
+        { "id": 1, "text": "Thành nói thật" },
+        { "id": 2, "text": "Yến nói thật" },
+        { "id": 3, "text": "Huy nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Huy nói thật vì không lưu trạng thái deny sẽ gây loop. Thành chỉ check permission là chưa đủ. Yến test chưa đủ các cases.",
+        "technicalDetails": "Cần lưu trạng thái permission để tránh xin lại permission khi user đã deny, và show appropriate message."
+      }
+    },
+    {
+      "id": 10,
+      "title": "Vụ Án Duplicate Items",
+      "scenario": "RecyclerView hiển thị duplicate items sau refresh.\nDev Dương làm list feature.\nQA Nhung test list behavior.\nLead Khoa review adapter code.",
+      "statements": [
+        "Dương: 'Tôi đã clear list trước khi add items mới.'",
+        "Nhung: 'List hiển thị đúng sau khi pull to refresh.'",
+        "Khoa: 'DiffUtil không được implement đúng.'"
+      ],
+      "question": "Ai nói thật về vấn đề duplicate?",
+      "difficulty": "easy",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check DiffUtil.Callback implementation",
+        "Clear list không phải là best practice",
+        "Test với nhiều loại data changes"
+      ],
+      "answers": [
+        { "id": 1, "text": "Dương nói thật" },
+        { "id": 2, "text": "Nhung nói thật" },
+        { "id": 3, "text": "Khoa nói thật" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Khoa nói thật vì DiffUtil không đúng sẽ gây duplicate items. Dương dùng cách clear list là không tối ưu. Nhung test chưa đủ cases.",
+        "technicalDetails": "DiffUtil.Callback cần implement đúng areItemsTheSame() và areContentsTheSame() để handle updates correctly."
+      }
+    }
+  ]
+}

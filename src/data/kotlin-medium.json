@@ -1,0 +1,304 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "title": "Vụ Án Màn Hình Đen",
+      "scenario": "Một ứng dụng Android gặp sự cố màn hình đen ngẫu nhiên sau khi cập nhật.\nDev Hùng phụ trách UI.\nQA Mai phụ trách testing.\nLead Tuấn giám sát dự án.",
+      "statements": [
+        "Hùng: 'Activity lifecycle đã được xử lý đúng, không có vấn đề gì với onResume().'",
+        "Mai: 'Lỗi chỉ xảy ra khi thiết bị ở chế độ Dark Mode.'",
+        "Tuấn: 'Chúng ta không có thay đổi nào trong file themes.xml gần đây.'"
+      ],
+      "question": "Ai đang nói thật về nguyên nhân gây ra màn hình đen?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Kiểm tra git history của file themes.xml 🕵️",
+        "Dark Mode có thể ảnh hưởng đến việc load resources",
+        "Activity lifecycle logs có thể tiết lộ timing issues"
+      ],
+      "answers": [
+        { "id": 1, "text": "Mai đang nói thật" },
+        { "id": 2, "text": "Hùng đang nói thật" },
+        { "id": 3, "text": "Tuấn đang nói thật" },
+        { "id": 4, "text": "Tất cả đều nói dối" }
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "logic": "Mai nói thật vì lỗi liên quan đến Dark Mode thường xuất phát từ việc xử lý resources không đúng. Git history cho thấy có thay đổi trong themes.xml, khiến Tuấn nói dối. Hùng cũng nói dối vì logs cho thấy có vấn đề với lifecycle.",
+        "technicalDetails": "Khi implement Dark Mode, cần đảm bảo resources được load đúng và xử lý các attributes trong themes correctly."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Bí Ẩn Memory Leak",
+      "scenario": "App bị báo cáo ngốn RAM bất thường.\nDev Minh làm việc với RecyclerView.\nQA Linh test performance.\nTech Lead Đức review code.",
+      "statements": [
+        "Minh: 'RecyclerView adapter đã được optimize với DiffUtil.'",
+        "Linh: 'Memory leak chỉ xảy ra khi scroll nhanh trong list dài.'",
+        "Đức: 'Không có static reference nào trong các ViewHolder.'"
+      ],
+      "question": "Ai đang nói thật về vấn đề memory leak?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check ViewHolder binding lifecycle 🔍",
+        "DiffUtil implementation có thể gây memory leak nếu không xử lý đúng",
+        "Profile heap dumps khi scroll"
+      ],
+      "answers": [
+        { "id": 1, "text": "Linh đang nói thật" },
+        { "id": 2, "text": "Minh đang nói thật" },
+        { "id": 3, "text": "Đức đang nói thật" },
+        { "id": 4, "text": "Không ai nói thật" }
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "logic": "Linh nói thật vì hiện tượng memory leak khi scroll nhanh là dấu hiệu của việc không giải phóng resources đúng cách. Minh nói dối vì DiffUtil implementation có vấn đề. Đức nói dối vì có static references trong code.",
+        "technicalDetails": "Memory leaks trong RecyclerView thường do không proper cleanup ViewHolder resources và incorrect handling của large datasets."
+      }
+    },
+    {
+      "id": 3,
+      "title": "Загадка Crash Report",
+      "scenario": "App crash ngẫu nhiên trên Android 11+.\nDev Thành làm feature mới.\nQA Hương test compatibility.\nDevOps Nam check crash reports.",
+      "statements": [
+        "Thành: 'Code mới không động đến permission handling.'",
+        "Hương: 'Crash chỉ xảy ra khi access camera trên Android 11.'",
+        "Nam: 'Crash rate tăng 50% sau deploy version mới.'"
+      ],
+      "question": "Ai đang nói thật về nguyên nhân crash?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Android 11 thay đổi nhiều về permission model 📱",
+        "Check AndroidManifest permissions declaration",
+        "Review Firebase Crashlytics reports"
+      ],
+      "answers": [
+        { "id": 1, "text": "Thành đang nói thật" },
+        { "id": 2, "text": "Hương đang nói thật" },
+        { "id": 3, "text": "Nam đang nói thật" },
+        { "id": 4, "text": "Tất cả đều nói thật" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Hương nói thật vì Android 11 có thay đổi lớn về permission model, đặc biệt là camera permissions. Thành nói dối vì code mới có ảnh hưởng đến permissions. Nam nói dối về tỷ lệ crash.",
+        "technicalDetails": "Android 11 requires explicit camera permission handling và scoped storage implementation."
+      }
+    },
+    {
+      "id": 4,
+      "title": "Vụ Án Background Task",
+      "scenario": "App bị report drain pin nhanh bất thường.\nDev An làm background service.\nQA Trang test battery usage.\nTech Lead Dũng review implementation.",
+      "statements": [
+        "An: 'WorkManager đã được setup với constraints đầy đủ.'",
+        "Trang: 'Battery drain chỉ xảy ra khi có nhiều background tasks.'",
+        "Dũng: 'Chúng ta không dùng ForegroundService không cần thiết.'"
+      ],
+      "question": "Ai đang nói thật về vấn đề battery drain?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check WorkManager configuration và constraints",
+        "Monitor battery usage patterns với Android Studio",
+        "Review Service lifecycle và wake locks"
+      ],
+      "answers": [
+        { "id": 1, "text": "An đang nói thật" },
+        { "id": 2, "text": "Trang đang nói thật" },
+        { "id": 3, "text": "Dũng đang nói thật" },
+        { "id": 4, "text": "Không ai nói thật" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Trang nói thật vì battery drain tăng khi có nhiều background tasks là hiện tượng phổ biến. An nói dối về WorkManager constraints. Dũng nói dối vì có unnecessary ForegroundServices.",
+        "technicalDetails": "Proper background task scheduling và battery optimization requires careful consideration of WorkManager constraints và Service lifecycle."
+      }
+    },
+    {
+      "id": 5,
+      "title": "Bí Ẩn Custom View",
+      "scenario": "App có vấn đề render với custom view mới.\nDev Hà implement custom view.\nQA Bình test UI.\nLead Cường review performance.",
+      "statements": [
+        "Hà: 'onDraw() đã được optimize không có object allocation.'",
+        "Bình: 'Lag chỉ xảy ra khi có animation phức tạp.'",
+        "Cường: 'Frame drops không liên quan đến main thread.'"
+      ],
+      "question": "Ai đang nói thật về vấn đề performance?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Profile GPU rendering",
+        "Check object allocation trong onDraw()",
+        "Monitor main thread execution"
+      ],
+      "answers": [
+        { "id": 1, "text": "Hà đang nói thật" },
+        { "id": 2, "text": "Bình đang nói thật" },
+        { "id": 3, "text": "Cường đang nói thật" },
+        { "id": 4, "text": "Tất cả đều nói dối" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Bình nói thật vì complex animations thường gây lag trong custom views. Hà nói dối về object allocation. Cường nói dối vì frame drops có liên quan đến main thread.",
+        "technicalDetails": "Custom View performance optimization requires careful handling of object allocation trong onDraw() và proper animation implementation."
+      }
+    },
+    {
+      "id": 6,
+      "title": "Vụ Án Data Binding",
+      "scenario": "App có UI không sync với data model.\nDev Loan làm MVVM architecture.\nQA Phương test UI states.\nTech Lead Sơn review architecture.",
+      "statements": [
+        "Loan: 'LiveData observers đã được remove trong onDestroy.'",
+        "Phương: 'UI chỉ desync sau khi rotate màn hình.'",
+        "Sơn: 'ViewModel không có memory leaks.'"
+      ],
+      "question": "Ai đang nói thật về vấn đề data binding?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check lifecycle-aware components implementation",
+        "Monitor configuration changes handling",
+        "Review ViewModel scope và cleanup"
+      ],
+      "answers": [
+        { "id": 1, "text": "Loan đang nói thật" },
+        { "id": 2, "text": "Phương đang nói thật" },
+        { "id": 3, "text": "Sơn đang nói thật" },
+        { "id": 4, "text": "Không ai nói thật" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Phương nói thật vì desync sau rotation là dấu hiệu của việc không handle configuration changes đúng cách. Loan nói dối về observer removal. Sơn nói dối về memory leaks.",
+        "technicalDetails": "Proper MVVM implementation requires careful handling của lifecycle events và configuration changes."
+      }
+    },
+    {
+      "id": 7,
+      "title": "Bí Ẩn Network Cache",
+      "scenario": "App load data chậm trong offline mode.\nDev Tùng làm network layer.\nQA Ngọc test offline capability.\nLead Khoa review architecture.",
+      "statements": [
+        "Tùng: 'Room database đã được index optimally.'",
+        "Ngọc: 'Slow loading chỉ xảy ra với large datasets.'",
+        "Khoa: 'Cache strategy không có vấn đề gì.'"
+      ],
+      "question": "Ai đang nói thật về vấn đề caching?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check Room database queries và indexes",
+        "Monitor database operations timing",
+        "Review cache invalidation logic"
+      ],
+      "answers": [
+        { "id": 1, "text": "Tùng đang nói thật" },
+        { "id": 2, "text": "Ngọc đang nói thật" },
+        { "id": 3, "text": "Khoa đang nói thật" },
+        { "id": 4, "text": "Tất cả đều nói dối" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Ngọc nói thật vì performance issues với large datasets là phổ biến khi không optimize đúng cách. Tùng nói dối về database indexing. Khoa nói dối về cache strategy.",
+        "technicalDetails": "Efficient offline caching requires proper database indexing, query optimization, và smart cache invalidation strategy."
+      }
+    },
+    {
+      "id": 8,
+      "title": "Vụ Án Push Notification",
+      "scenario": "Push notifications không đến đúng devices.\nDev Việt làm notification system.\nQA Hạnh test notification delivery.\nDevOps Đạt manage FCM.",
+      "statements": [
+        "Việt: 'Token refresh đã được handle đúng cách.'",
+        "Hạnh: 'Notifications chỉ fail trên một số device models.'",
+        "Đạt: 'FCM configuration không có vấn đề gì.'"
+      ],
+      "question": "Ai đang nói thật về vấn đề notifications?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check FCM token refresh implementation",
+        "Review device-specific notification behavior",
+        "Monitor FCM delivery reports"
+      ],
+      "answers": [
+        { "id": 1, "text": "Việt đang nói thật" },
+        { "id": 2, "text": "Hạnh đang nói thật" },
+        { "id": 3, "text": "Đạt đang nói thật" },
+        { "id": 4, "text": "Không ai nói thật" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Hạnh nói thật vì notification behavior có thể khác nhau trên các device models khác nhau. Việt nói dối về token refresh. Đạt nói dối về FCM configuration.",
+        "technicalDetails": "Push notification reliability requires proper token refresh handling và device-specific considerations."
+      }
+    },
+    {
+      "id": 9,
+      "title": "Bí Ẩn App Size",
+      "scenario": "App size tăng đột ngột sau update.\nDev Hoàng làm resource optimization.\nQA Lan test app bundle.\nLead Trung review build config.",
+      "statements": [
+        "Hoàng: 'Tất cả images đã được optimize với WebP.'",
+        "Lan: 'App size chỉ tăng trên một số ABI targets.'",
+        "Trung: 'ProGuard rules không có vấn đề gì.'"
+      ],
+      "question": "Ai đang nói thật về app size issue?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Analyze APK using Android Studio",
+        "Check ABI configurations",
+        "Review ProGuard rules và optimization"
+      ],
+      "answers": [
+        { "id": 1, "text": "Hoàng đang nói thật" },
+        { "id": 2, "text": "Lan đang nói thật" },
+        { "id": 3, "text": "Trung đang nói thật" },
+        { "id": 4, "text": "Tất cả đều nói dối" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Lan nói thật vì app size differences across ABIs là phổ biến khi có native libraries. Hoàng nói dối về image optimization. Trung nói dối về ProGuard rules.",
+        "technicalDetails": "App size optimization requires careful handling của resource optimization, ABI configurations, và ProGuard rules."
+      }
+    },
+    {
+      "id": 10,
+      "title": "Vụ Án Fragment Transaction",
+      "scenario": "App có state loss sau fragment transactions.\nDev Quân làm navigation system.\nQA Thảo test user flows.\nLead Hải review architecture.",
+      "statements": [
+        "Quân: 'commitAllowingStateLoss không được sử dụng.'",
+        "Thảo: 'State loss chỉ xảy ra khi navigate rapidly.'",
+        "Hải: 'Fragment lifecycle được handle đúng cách.'"
+      ],
+      "question": "Ai đang nói thật về fragment state loss?",
+      "difficulty": "medium",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check fragment transaction timing",
+        "Review navigation patterns",
+        "Monitor fragment lifecycle states"
+      ],
+      "answers": [
+        { "id": 1, "text": "Quân đang nói thật" },
+        { "id": 2, "text": "Thảo đang nói thật" },
+        { "id": 3, "text": "Hải đang nói thật" },
+        { "id": 4, "text": "Không ai nói thật" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Thảo nói thật vì state loss during rapid navigation là hiện tượng phổ biến khi không handle fragment transactions đúng cách. Quân nói dối về commitAllowingStateLoss usage. Hải nói dối về lifecycle handling.",
+        "technicalDetails": "Proper fragment transaction handling requires careful consideration của timing, lifecycle states, và appropriate use của commit methods."
+      }
+    }
+  ]
+}

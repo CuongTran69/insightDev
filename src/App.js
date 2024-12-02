@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './App.css';
 import { memo } from 'react';
-import questionsData from './data/questions.json';
 
 // Thêm Error Boundary component (đặt ở trên cùng, ngoài App component)
 class ErrorBoundary extends React.Component {
@@ -50,6 +49,17 @@ const ErrorMessage = memo(({ message }) => (
   </div>
 ));
 
+// Function to dynamically import JSON data
+const loadQuestionsData = async (language, difficulty) => {
+  try {
+    const data = await import(`./data/${language}-${difficulty}.json`);
+    return data.default;
+  } catch (error) {
+    console.error('Error loading questions data:', error);
+    return { questions: [] }; // Return an empty structure if there's an error
+  }
+};
+
 function App() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [visibleHints, setVisibleHints] = useState([]);
@@ -77,6 +87,18 @@ function App() {
   });
   const questionContainerRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // State to hold questions data
+  const [questionsData, setQuestionsData] = useState({ questions: [] });
+
+  // Load questions data when language or difficulty changes
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const data = await loadQuestionsData(selectedLanguage, selectedDifficulty);
+      setQuestionsData(data);
+    };
+    fetchQuestions();
+  }, [selectedLanguage, selectedDifficulty]);
 
   // Sample detective puzzle
   const questions = questionsData.questions;
@@ -157,7 +179,7 @@ function App() {
       question.language === selectedLanguage && 
       question.difficulty === selectedDifficulty
     );
-  }, [selectedLanguage, selectedDifficulty]);
+  }, [questionsData, selectedLanguage, selectedDifficulty]);
 
   // Cập nhật state để theo dõi index của câu hỏi trong danh sách đã lọc
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);

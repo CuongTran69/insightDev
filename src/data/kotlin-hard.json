@@ -1,0 +1,304 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "title": "Bí Ẩn Về Memory Leak",
+      "scenario": "Một ứng dụng Android gặp vấn đề về memory leak nghiêm trọng. Senior Dev Mai phát hiện vấn đề khi review code. Android Dev Hùng là người viết code chính. QA Lead Tâm báo cáo về crash reports.",
+      "statements": [
+        "Mai: 'Memory leak xảy ra do không hủy đăng ký listeners trong Fragment.'",
+        "Hùng: 'Tôi đã implement đầy đủ onDestroy() và clear tất cả references.'",
+        "Tâm: 'OutOfMemoryError chỉ xảy ra khi rotate màn hình nhiều lần.'"
+      ],
+      "question": "Ai đang nói thật về nguyên nhân gây memory leak?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Kiểm tra lifecycle của Fragment và Activity",
+        "Xem xét cách handling configuration changes",
+        "Analyze heap dumps có thể tiết lộ điều gì? 🔍"
+      ],
+      "answers": [
+        { "id": 1, "text": "Mai và Tâm nói thật" },
+        { "id": 2, "text": "Chỉ có Hùng nói thật" },
+        { "id": 3, "text": "Cả ba người đều nói dối" },
+        { "id": 4, "text": "Chỉ có Tâm nói thật" }
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "logic": "Mai và Tâm nói thật vì memory leak trong Fragment thường liên quan đến việc không hủy đăng ký listeners và thường biểu hiện rõ khi rotate screen. Hùng nói không đúng vì nếu đã implement đầy đủ onDestroy() thì sẽ không xảy ra leak.",
+        "technicalDetails": "Memory leak trong Android thường xảy ra khi giữ strong references đến Views hoặc Context sau khi Fragment/Activity đã bị destroy. Configuration changes như rotate screen sẽ trigger destroy/recreate cycle, làm lộ rõ vấn đề này."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Hiệu Năng WorkManager Bí Ẩn",
+      "scenario": "Team phát hiện WorkManager tasks chạy không đúng lịch trình. DevOps Minh báo cáo về server logs. Android Lead Nga review implementation. Performance Engineer Đức phân tích metrics.",
+      "statements": [
+        "Minh: 'Server nhận requests không theo pattern, hoàn toàn random.'",
+        "Nga: 'WorkManager constraints đã được set đúng với network và battery conditions.'",
+        "Đức: 'Battery optimization của device không ảnh hưởng đến schedule.'"
+      ],
+      "question": "Đâu là nguyên nhân thực sự của vấn đề?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Xem xét Doze mode và App Standby",
+        "Check WorkManager initialization và configuration",
+        "Device manufacturer có custom battery optimization không? 🔋"
+      ],
+      "answers": [
+        { "id": 1, "text": "WorkManager constraints configuration sai" },
+        { "id": 2, "text": "Server-side scheduling issues" },
+        { "id": 3, "text": "Device battery optimization" },
+        { "id": 4, "text": "Network conditions" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Minh nói thật về pattern không đều. Nga cũng nói thật về configuration. Đức nói dối vì battery optimization CÓ ảnh hưởng đến WorkManager schedule, đặc biệt trên các device của một số nhà sản xuất.",
+        "technicalDetails": "Các nhà sản xuất Android khác nhau có các cơ chế battery optimization khác nhau, có thể override default behavior của WorkManager. Cần implement foreground service hoặc whitelist app trong battery optimization settings."
+      }
+    },
+    {
+      "id": 3,
+      "title": "Crash Bí Ẩn Trong Custom View",
+      "scenario": "App crash khi render custom view phức tạp. UI Dev Hương phụ trách phần custom view. Tech Lead Thành review performance. QA Chuyên test trên nhiều devices.",
+      "statements": [
+        "Hương: 'Canvas operations đều đã được tối ưu và cache.'",
+        "Thành: 'Profile cho thấy không có memory pressure khi render.'",
+        "Chuyên: 'Crash chỉ xảy ra trên Android 12 trở lên.'"
+      ],
+      "question": "Đâu là nguyên nhân thực sự của crash?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check Hardware Acceleration compatibility",
+        "Review Android 12+ changes in rendering pipeline",
+        "Analyze stack trace từ các crash reports 📊"
+      ],
+      "answers": [
+        { "id": 1, "text": "Memory management issues" },
+        { "id": 2, "text": "Hardware acceleration conflicts" },
+        { "id": 3, "text": "Thread synchronization" },
+        { "id": 4, "text": "Canvas operation bugs" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Chuyên nói thật về Android 12+. Hương và Thành nói không đúng về optimization và memory pressure. Vấn đề thực sự là hardware acceleration conflicts trên Android 12+.",
+        "technicalDetails": "Android 12 introduced changes in rendering pipeline và hardware acceleration behavior. Một số canvas operations không tương thích với hardware acceleration cần được handle riêng hoặc disable hardware acceleration cho specific views."
+      }
+    },
+    {
+      "id": 4,
+      "title": "Bí Ẩn Về Database Migration",
+      "scenario": "App crash sau khi update với database migration mới. Database Dev Loan implement migration. Release Manager Sơn quản lý rollout. Test Lead Bình verify migration.",
+      "statements": [
+        "Loan: 'Migration script đã test kỹ trên tất cả database versions.'",
+        "Sơn: 'Crash chỉ xảy ra trên devices đã skip vài versions.'",
+        "Bình: 'Test coverage cho migration paths là 100%.'"
+      ],
+      "question": "Tại sao migration thất bại?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check migration path từ old versions",
+        "Review Room Database version history",
+        "Analyze crash reports từ different Android versions 📱"
+      ],
+      "answers": [
+        { "id": 1, "text": "Thiếu migration path" },
+        { "id": 2, "text": "Database corruption" },
+        { "id": 3, "text": "Version conflict" },
+        { "id": 4, "text": "SQL syntax errors" }
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "logic": "Sơn nói thật về crash trên devices skip versions. Loan và Bình nói không đúng về test coverage. Vấn đề là thiếu migration paths cho một số version combinations.",
+        "technicalDetails": "Room Database migration cần handle tất cả possible paths giữa các versions. Nếu user skip updates, app cần support migration từ bất kỳ version cũ nào lên version mới nhất."
+      }
+    },
+    {
+      "id": 5,
+      "title": "Bí Ẩn Về Background Processing",
+      "scenario": "Background tasks không hoàn thành trên một số devices. Android Dev Tuấn implement background processing. System Architect Hà review architecture. Performance Engineer Phong analyze metrics.",
+      "statements": [
+        "Tuấn: 'Đã implement đầy đủ background processing best practices.'",
+        "Hà: 'Architecture không có single point of failure.'",
+        "Phong: 'Tasks bị kill ngẫu nhiên không theo pattern.'"
+      ],
+      "question": "Đâu là vấn đề thực sự?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Review background processing limits",
+        "Check foreground service implementation",
+        "Analyze device manufacturer specific behaviors 🔍"
+      ],
+      "answers": [
+        { "id": 1, "text": "Implementation bugs" },
+        { "id": 2, "text": "Architecture flaws" },
+        { "id": 3, "text": "Manufacturer-specific restrictions" },
+        { "id": 4, "text": "Memory management issues" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Phong nói thật về random task termination. Tuấn và Hà nói không đúng về implementation và architecture. Vấn đề là manufacturer-specific background processing restrictions.",
+        "technicalDetails": "Các nhà sản xuất Android khác nhau có các cơ chế quản lý background processing khác nhau, có thể aggressive hơn AOSP. Cần adapt theo từng manufacturer và implement các workarounds phù hợp."
+      }
+    },
+    {
+      "id": 6,
+      "title": "Bí Ẩn Về Push Notification",
+      "scenario": "Push notifications không đến một số users. Firebase Expert Nam check configuration. Android Dev Linh implement notification handling. QA Lead Trung test notification flows.",
+      "statements": [
+        "Nam: 'Firebase configuration và server keys đều correct.'",
+        "Linh: 'Notification channels đã được setup đúng cho Android 8+.'",
+        "Trung: 'Notifications work fine trên test devices nhưng fail random trên user devices.'"
+      ],
+      "question": "Tại sao notifications không đến?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check device power saving modes",
+        "Review notification permission handling",
+        "Analyze Firebase delivery reports 📱"
+      ],
+      "answers": [
+        { "id": 1, "text": "Firebase misconfiguration" },
+        { "id": 2, "text": "Permission issues" },
+        { "id": 3, "text": "Network problems" },
+        { "id": 4, "text": "Multiple root causes" }
+      ],
+      "correctAnswer": 4,
+      "explanation": {
+        "logic": "Trung nói thật về random failures. Nam và Linh nói không đầy đủ. Vấn đề có nhiều nguyên nhân: permission, power saving, và manufacturer-specific restrictions.",
+        "technicalDetails": "Push notification delivery phụ thuộc vào nhiều factors: Firebase configuration, notification permissions, device power saving mode, manufacturer-specific restrictions, và network conditions."
+      }
+    },
+    {
+      "id": 7,
+      "title": "Bí Ẩn Về App Size",
+      "scenario": "App size tăng đột ngột sau update. Build Engineer Dũng check build configuration. Asset Manager Trang quản lý resources. Performance Lead Khoa analyze build reports.",
+      "statements": [
+        "Dũng: 'ProGuard và R8 đã được configure đúng.'",
+        "Trang: 'Không có assets mới nào được thêm vào.'",
+        "Khoa: 'APK size tăng chủ yếu ở native libraries.'"
+      ],
+      "question": "Tại sao app size tăng?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Analyze APK using APK Analyzer",
+        "Check native library configurations",
+        "Review dependency tree 📦"
+      ],
+      "answers": [
+        { "id": 1, "text": "Missing ProGuard rules" },
+        { "id": 2, "text": "Duplicate resources" },
+        { "id": 3, "text": "Native library duplication" },
+        { "id": 4, "text": "Unoptimized assets" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Khoa nói thật về native libraries. Dũng và Trang nói không đúng. Native libraries được duplicate across different ABIs do thiếu configuration.",
+        "technicalDetails": "Native libraries có thể được duplicate nếu không properly configure ABI filters và split APKs. Cần review native dependency management và ABI targeting."
+      }
+    },
+    {
+      "id": 8,
+      "title": "Bí Ẩn Về UI Performance",
+      "scenario": "UI lag trên một số specific screens. UI Dev Quân implement custom views. Performance Engineer Yến profile performance. UX Lead Hạnh analyze user reports.",
+      "statements": [
+        "Quân: 'Tất cả layouts đã được optimize với ConstraintLayout.'",
+        "Yến: 'Không có UI operations nào trên main thread.'",
+        "Hạnh: 'Lag chỉ xảy ra sau khi navigate qua nhiều screens.'"
+      ],
+      "question": "Đâu là nguyên nhân của UI lag?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Check Fragment/Activity lifecycle",
+        "Review navigation stack management",
+        "Analyze memory allocation patterns 🔍"
+      ],
+      "answers": [
+        { "id": 1, "text": "Layout hierarchy quá phức tạp" },
+        { "id": 2, "text": "Memory leaks" },
+        { "id": 3, "text": "Background thread blocking" },
+        { "id": 4, "text": "Resource caching issues" }
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "logic": "Hạnh nói thật về lag pattern. Quân và Yến nói không đúng về optimizations. Memory leaks trong navigation stack gây ra performance degradation.",
+        "technicalDetails": "Memory leaks trong Fragment/Activity navigation có thể accumulate và affect performance. Cần proper cleanup trong lifecycle methods và careful management của navigation stack."
+      }
+    },
+    {
+      "id": 9,
+      "title": "Bí Ẩn Về Data Sync",
+      "scenario": "Data sync fails intermittently với backend. Backend Dev An implement sync logic. Android Dev Bảo handle local storage. Network Engineer Cường monitor traffic.",
+      "statements": [
+        "An: 'Backend APIs đều support partial sync và resumption.'",
+        "Bảo: 'Local database transactions đều atomic và consistent.'",
+        "Cường: 'Network requests timeout không theo pattern.'"
+      ],
+      "question": "Tại sao sync thất bại?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Review sync scheduler implementation",
+        "Check network state handling",
+        "Analyze conflict resolution logic 🔄"
+      ],
+      "answers": [
+        { "id": 1, "text": "Network instability" },
+        { "id": 2, "text": "Database conflicts" },
+        { "id": 3, "text": "Race conditions" },
+        { "id": 4, "text": "Incorrect error handling" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Cường nói thật về network timeouts. An và Bảo nói không đúng về implementation details. Race conditions trong sync process gây ra failures.",
+        "technicalDetails": "Concurrent sync operations có thể lead to race conditions. Cần implement proper synchronization mechanisms, mutex locks, và careful handling của concurrent database operations."
+      }
+    },
+    {
+      "id": 10,
+      "title": "Bí Ẩn Về App Startup",
+      "scenario": "App startup time tăng đột ngột. Performance Lead Đạt analyze startup metrics. Android Dev Hiền implement initialization logic. System Architect Giang review architecture.",
+      "statements": [
+        "Đạt: 'Cold start time tăng gấp đôi sau update mới.'",
+        "Hiền: 'Đã implement tất cả initialization dùng WorkManager.'",
+        "Giang: 'Architecture không có initialization bottlenecks.'"
+      ],
+      "question": "Tại sao startup chậm?",
+      "difficulty": "hard",
+      "language": "kotlin",
+      "category": "android",
+      "hints": [
+        "Review startup sequence và dependencies",
+        "Check ContentProvider initialization",
+        "Analyze startup trace results 🚀"
+      ],
+      "answers": [
+        { "id": 1, "text": "Excessive disk I/O" },
+        { "id": 2, "text": "Too many background tasks" },
+        { "id": 3, "text": "Heavy initialization in ContentProvider" },
+        { "id": 4, "text": "Network calls blocking startup" }
+      ],
+      "correctAnswer": 3,
+      "explanation": {
+        "logic": "Đạt nói thật về startup time. Hiền và Giang nói không đúng về implementation và architecture. Heavy initialization trong ContentProvider là nguyên nhân chính.",
+        "technicalDetails": "ContentProvider được initialize trước Application class. Heavy operations trong ContentProvider directly impact cold start time. Cần move heavy initialization vào appropriate lifecycle stages và use lazy initialization where possible."
+      }
+    }
+  ]
+}
