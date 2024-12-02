@@ -243,15 +243,33 @@ function App() {
     setSelectedAnswer(null);
   };
 
+  // Thêm state để kiểm soát modal hoàn thành
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [completionStats, setCompletionStats] = useState(null);
+
+  // Cập nhật hàm nextQuestion
   const nextQuestion = async () => {
     setIsLoading(true);
     try {
       if (currentQuestionIndex < filteredQuestions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
+        resetQuestion();
       } else {
-        setCurrentQuestionIndex(0);
+        // Tính toán thống kê khi hoàn thành
+        const currentProgress = progress[`${selectedLanguage}-${selectedDifficulty}`] || {};
+        const totalAnswered = Object.values(currentProgress).length;
+        const correctAnswers = Object.values(currentProgress).filter(q => q.correct).length;
+        
+        setCompletionStats({
+          totalQuestions: filteredQuestions.length,
+          answeredQuestions: totalAnswered,
+          correctAnswers: correctAnswers,
+          totalScore: score,
+          accuracy: Math.round((correctAnswers / totalAnswered) * 100)
+        });
+        
+        setShowCompletionModal(true);
       }
-      resetQuestion();
       
       // Scroll to top của question container với animation mượt
       if (questionContainerRef.current) {
@@ -671,6 +689,57 @@ function App() {
   // Thêm state cho error message
   const [errorMessage, setErrorMessage] = useState(null);
 
+  // Thêm component CompletionModal
+  const CompletionModal = memo(({ stats, onClose, onRestart }) => {
+    if (!stats) return null;
+
+    return (
+      <div className="completion-modal-overlay">
+        <div className="completion-modal">
+          <div className="completion-header">
+            <h2>🎉 Chúc mừng!</h2>
+            <p>Bạn đã hoàn thành tất cả câu hỏi</p>
+          </div>
+          
+          <div className="completion-stats">
+            <div className="stat-item">
+              <span className="stat-label">Tổng số câu</span>
+              <span className="stat-value">{stats.totalQuestions}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Số câu đúng</span>
+              <span className="stat-value">{stats.correctAnswers}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Độ chính xác</span>
+              <span className="stat-value">{stats.accuracy}%</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Tổng điểm</span>
+              <span className="stat-value">{stats.totalScore} 🏆</span>
+            </div>
+          </div>
+          
+          <div className="completion-actions">
+            <button className="restart-btn" onClick={onRestart}>
+              Làm lại từ đầu
+            </button>
+            <button className="close-btn" onClick={onClose}>
+              Đóng
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  });
+
+  // Thêm hàm xử lý restart
+  const handleRestart = () => {
+    setCurrentQuestionIndex(0);
+    resetQuestion();
+    setShowCompletionModal(false);
+  };
+
   return (
     <div className="App">
       <div className="theme-toggle">
@@ -699,7 +768,7 @@ function App() {
         <div className={`sidebar ${isMobileMenuOpen ? 'active' : ''}`}>
           <div className="sidebar-header">
             <div className="logo">
-              <h1>{'</'} Tech Detective {'>'}</h1>
+              <h1>{'</'}Tech Detective{'>'}</h1>
               <div className="badge">🕵️‍♂️ Case Files</div>
             </div>
           </div>
@@ -905,6 +974,14 @@ function App() {
           )}
         </main>
       </div>
+      
+      {showCompletionModal && (
+        <CompletionModal
+          stats={completionStats}
+          onClose={() => setShowCompletionModal(false)}
+          onRestart={handleRestart}
+        />
+      )}
     </div>
   );
 }

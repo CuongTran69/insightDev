@@ -1740,7 +1740,7 @@ body {
   border-bottom: 1px solid var(--card-border);
 }
 
-/* Thay đổi button chọn ngôn ng�� */
+/* Thay đổi button chọn ngôn ngữ */
 .selected-language-btn {
   display: flex;
   align-items: center;
@@ -3168,5 +3168,137 @@ html {
   .floating-controls {
     bottom: 30px;
     right: 30px;
+  }
+}
+
+/* Completion Modal Styles */
+.completion-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-index-modal);
+  animation: fadeIn 0.3s ease;
+}
+
+.completion-modal {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  animation: slideUp 0.3s ease;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.completion-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.completion-header h2 {
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.completion-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.completion-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.completion-stats .stat-item {
+  background: var(--hover-bg);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--card-border);
+}
+
+.stat-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  display: block;
+  color: var(--accent-color);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.completion-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.completion-actions button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.restart-btn {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+}
+
+.close-btn {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+}
+
+.completion-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .completion-modal {
+    padding: 1.5rem;
+  }
+
+  .completion-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .completion-stats {
+    gap: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
   }
 }

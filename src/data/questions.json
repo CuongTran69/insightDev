@@ -2,292 +2,884 @@
     "questions": [
       {
         "id": 1,
-        "title": "Bí Ẩn Về Memory Leak",
-        "scenario": "Một ứng dụng iOS đang gặp vấn đề về memory leak.\nDev An nói về delegate pattern.\nQA Bình báo cáo về crash.",
+        "title": "Vụ Mất Tích Của Biến Toàn Cục",
+        "scenario": "Trưởng nhóm Linh báo cáo một lỗi trong ứng dụng.\nDev junior Nam khẳng định đã kiểm tra tất cả biến.\nDevOps Hùng nói rằng không có thay đổi nào trong cấu hình hệ thống.",
         "statements": [
-          "An: 'Tôi đã set delegate = nil trong deinit.'",
-          "Bình: 'App crash sau khi đóng màn hình 5 lần.'"
+          "Linh: 'Lỗi chỉ xuất hiện khi chạy trên thiết bị thật.'",
+          "Nam: 'Tôi đã kiểm tra tất cả biến trước khi đẩy code.'",
+          "Hùng: 'Chúng tôi không thay đổi cấu hình hệ thống gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề memory leak?",
+        "question": "Ai đang nói thật về lỗi trong ứng dụng?",
         "difficulty": "easy",
         "language": "swift",
         "category": "mobile",
         "hints": [
-          "Kiểm tra cách implement delegate 🔍",
-          "Memory leak thường xảy ra do retain cycle 🔄",
-          "Delegate property cần được đánh dấu weak 💡"
+          "Kiểm tra log của thiết bị thật và giả lập",
+          "So sánh cấu hình giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra biến"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ An nói thật" },
-          { "id": 3, "text": "Chỉ Bình nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Linh đang nói thật" },
+          { "id": 2, "text": "Nam đang nói thật" },
+          { "id": 3, "text": "Hùng đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
-        "correctAnswer": 3,
+        "correctAnswer": 1,
         "explanation": {
-          "logic": "Bình nói thật vì crash do memory leak là hiện tượng phổ biến. An nói dối vì chỉ set delegate = nil thôi chưa đủ, cần khai báo delegate là weak reference.",
-          "technicalDetails": "Trong Swift, delegate pattern cần được khai báo là weak để tránh retain cycle: weak var delegate: ProtocolName?"
+          "logic": "Linh đang nói thật vì lỗi thường chỉ xuất hiện trên thiết bị thật do sự khác biệt về môi trường. Nam có thể đã bỏ sót biến toàn cục. Hùng có thể kiểm tra lại log cấu hình.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra trên cả thiết bị thật và giả lập."
         }
       },
       {
         "id": 2,
-        "title": "Màn Hình Trắng Bí Ẩn",
-        "scenario": "User báo cáo màn hình trắng khi mở app.\nDev Cường vừa thêm splash screen.\nTester Dung kiểm tra trên nhiều thiết bị.",
+        "title": "Vấn Đề Với API",
+        "scenario": "Trưởng nhóm Minh báo cáo API không phản hồi.\nDev junior An khẳng định đã kiểm tra endpoint.\nDevOps Bình nói rằng không có thay đổi nào trong firewall.",
         "statements": [
-          "Cường: 'Splash screen hoạt động tốt trên simulator.'",
-          "Dung: 'Lỗi chỉ xuất hiện trên iOS 14 trở lên.'"
+          "Minh: 'API không phản hồi chỉ khi gọi từ ứng dụng.'",
+          "An: 'Tôi đã kiểm tra tất cả endpoint trước khi đẩy code.'",
+          "Bình: 'Chúng tôi không thay đổi cấu hình firewall gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề màn hình trắng?",
+        "question": "Ai đang nói thật về vấn đề API?",
         "difficulty": "easy",
         "language": "swift",
-        "category": "mobile",
+        "category": "backend",
         "hints": [
-          "Kiểm tra LaunchScreen.storyboard 📱",
-          "Xem xét Info.plist configuration ⚙️",
-          "iOS version compatibility là quan trọng 🔍"
+          "Kiểm tra log của API server",
+          "So sánh cấu hình firewall giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra endpoint"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Cường nói thật" },
-          { "id": 3, "text": "Chỉ Dung nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Minh đang nói thật" },
+          { "id": 2, "text": "An đang nói thật" },
+          { "id": 3, "text": "Bình đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
-        "correctAnswer": 2,
+        "correctAnswer": 1,
         "explanation": {
-          "logic": "Cường nói thật vì splash screen thường hoạt động tốt trên simulator. Dung nói dối vì vấn đề màn hình trắng thường không liên quan đến phiên bản iOS cụ thể.",
-          "technicalDetails": "Màn hình trắng thường do thiếu configuration trong Info.plist hoặc LaunchScreen.storyboard không được set up đúng."
+          "logic": "Minh đang nói thật vì API có thể không phản hồi do vấn đề với ứng dụng. An có thể đã bỏ sót endpoint. Bình có thể kiểm tra lại log firewall.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra endpoint và cấu hình firewall."
         }
       },
       {
         "id": 3,
-        "title": "Auto Layout Gone Wrong",
-        "scenario": "App hiển thị lỗi layout trên iPhone SE.\nDev Em vừa update constraints.\nQA Fong test trên nhiều device.",
+        "title": "Lỗi Giao Diện Người Dùng",
+        "scenario": "Trưởng nhóm Lan báo cáo lỗi giao diện trên iOS.\nDev junior Phong khẳng định đã kiểm tra trên mọi thiết bị.\nDevOps Dũng nói rằng không có thay đổi nào trong cấu hình build.",
         "statements": [
-          "Em: 'Tôi đã set constraints relative to margins.'",
-          "Fong: 'Layout vẫn đẹp trên iPhone 14 Pro Max.'"
+          "Lan: 'Lỗi chỉ xuất hiện trên iPhone 12.'",
+          "Phong: 'Tôi đã kiểm tra trên mọi thiết bị trước khi đẩy code.'",
+          "Dũng: 'Chúng tôi không thay đổi cấu hình build gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề layout?",
+        "question": "Ai đang nói thật về lỗi giao diện?",
         "difficulty": "easy",
         "language": "swift",
-        "category": "mobile",
+        "category": "frontend",
         "hints": [
-          "Safe area và margins khác nhau 📏",
-          "iPhone SE có kích thước màn hình nhỏ 📱",
-          "Constraints cần linh hoạt với mọi size 🔄"
+          "Kiểm tra log của thiết bị iPhone 12",
+          "So sánh cấu hình build giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra thiết bị"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Em nói thật" },
-          { "id": 3, "text": "Chỉ Fong nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Lan đang nói thật" },
+          { "id": 2, "text": "Phong đang nói thật" },
+          { "id": 3, "text": "Dũng đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
         "correctAnswer": 1,
         "explanation": {
-          "logic": "Cả hai đều nói thật. Layout có thể hoạt động tốt trên màn hình lớn (iPhone 14 Pro Max) nhưng gặp vấn đề trên màn hình nhỏ (iPhone SE) dù đã set margins.",
-          "technicalDetails": "Cần sử dụng kết hợp safe area, margins và dynamic constraints để layout work trên mọi kích thước màn hình."
+          "logic": "Lan đang nói thật vì lỗi thường chỉ xuất hiện trên một số thiết bị cụ thể. Phong có thể đã bỏ sót iPhone 12. Dũng có thể kiểm tra lại log cấu hình build.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra trên nhiều thiết bị và cấu hình build."
         }
       },
       {
         "id": 4,
-        "title": "Network Call Mystery",
-        "scenario": "App không load được data từ API.\nDev Giang vừa update network layer.\nDevOps Hùng kiểm tra server status.",
+        "title": "Vấn Đề Với Cơ Sở Dữ Liệu",
+        "scenario": "Trưởng nhóm Hương báo cáo lỗi kết nối cơ sở dữ liệu.\nDev junior Quân khẳng định đã kiểm tra kết nối.\nDevOps Tùng nói rằng không có thay đổi nào trong cấu hình mạng.",
         "statements": [
-          "Giang: 'URLSession configuration đã được set up đúng.'",
-          "Hùng: 'Server đang hoạt động bình thường.'"
+          "Hương: 'Lỗi chỉ xuất hiện khi truy vấn dữ liệu lớn.'",
+          "Quân: 'Tôi đã kiểm tra kết nối trước khi đẩy code.'",
+          "Tùng: 'Chúng tôi không thay đổi cấu hình mạng gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề network?",
+        "question": "Ai đang nói thật về vấn đề cơ sở dữ liệu?",
         "difficulty": "easy",
         "language": "swift",
-        "category": "mobile",
+        "category": "backend",
         "hints": [
-          "Kiểm tra ATS settings trong Info.plist 🔒",
-          "Test API endpoint bằng Postman 🚀",
-          "URLSession cần proper configuration 🛠️"
+          "Kiểm tra log của cơ sở dữ liệu",
+          "So sánh cấu hình mạng giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra kết nối"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Giang nói thật" },
-          { "id": 3, "text": "Chỉ Hùng nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Hương đang nói thật" },
+          { "id": 2, "text": "Quân đang nói thật" },
+          { "id": 3, "text": "Tùng đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
-        "correctAnswer": 3,
+        "correctAnswer": 1,
         "explanation": {
-          "logic": "Hùng nói thật vì server status có thể kiểm tra được. Giang nói dối vì vấn đề thường nằm ở ATS configuration trong Info.plist.",
-          "technicalDetails": "App Transport Security (ATS) requirements cần được configure đúng để cho phép network calls trong iOS."
+          "logic": "Hương đang nói thật vì lỗi thường chỉ xuất hiện khi truy vấn dữ liệu lớn. Quân có thể đã bỏ sót kiểm tra kết nối. Tùng có thể kiểm tra lại log cấu hình mạng.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra kết nối và cấu hình mạng."
         }
       },
       {
         "id": 5,
-        "title": "Core Data Confusion",
-        "scenario": "Data không được lưu vào local database.\nDev Inh làm việc với Core Data.\nQA Kiên test chức năng save.",
+        "title": "Lỗi Xử Lý Dữ Liệu",
+        "scenario": "Trưởng nhóm Ngọc báo cáo lỗi xử lý dữ liệu.\nDev junior Hải khẳng định đã kiểm tra tất cả hàm xử lý.\nDevOps Sơn nói rằng không có thay đổi nào trong cấu hình server.",
         "statements": [
-          "Inh: 'Tôi đã gọi saveContext() sau khi update.'",
-          "Kiên: 'Data biến mất khi restart app.'"
+          "Ngọc: 'Lỗi chỉ xuất hiện khi xử lý dữ liệu từ API.'",
+          "Hải: 'Tôi đã kiểm tra tất cả hàm xử lý trước khi đẩy code.'",
+          "Sơn: 'Chúng tôi không thay đổi cấu hình server gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề Core Data?",
+        "question": "Ai đang nói thật về lỗi xử lý dữ liệu?",
         "difficulty": "easy",
         "language": "swift",
-        "category": "mobile",
+        "category": "backend",
         "hints": [
-          "Core Data requires proper context management 💾",
-          "Check persistence container setup 📦",
-          "SaveContext cần được gọi đúng thời điểm ⏱️"
+          "Kiểm tra log của server",
+          "So sánh cấu hình server giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra hàm xử lý"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Inh nói thật" },
-          { "id": 3, "text": "Chỉ Kiên nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Ngọc đang nói thật" },
+          { "id": 2, "text": "Hải đang nói thật" },
+          { "id": 3, "text": "Sơn đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
         "correctAnswer": 1,
         "explanation": {
-          "logic": "Cả hai đều nói thật. Có thể saveContext() được gọi nhưng persistent store coordinator không được setup đúng.",
-          "technicalDetails": "Core Data cần proper setup của NSPersistentContainer và proper handling của managed object context."
+          "logic": "Ngọc đang nói thật vì lỗi thường chỉ xuất hiện khi xử lý dữ liệu từ API. Hải có thể đã bỏ sót hàm xử lý. Sơn có thể kiểm tra lại log cấu hình server.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra hàm xử lý và cấu hình server."
         }
       },
       {
         "id": 6,
-        "title": "Push Notification Drama",
-        "scenario": "Push notifications không hoạt động trên production.\nDev Lan setup APNS.\nDevOps Minh kiểm tra certificates.",
+        "title": "Vấn Đề Với Thông Báo Đẩy",
+        "scenario": "Trưởng nhóm Hạnh báo cáo lỗi thông báo đẩy.\nDev junior Lâm khẳng định đã kiểm tra tất cả thông báo.\nDevOps Phúc nói rằng không có thay đổi nào trong cấu hình thông báo.",
         "statements": [
-          "Lan: 'Device token được gửi lên server thành công.'",
-          "Minh: 'Production certificate đã được update.'"
+          "Hạnh: 'Lỗi chỉ xuất hiện khi gửi thông báo từ server.'",
+          "Lâm: 'Tôi đã kiểm tra tất cả thông báo trước khi đẩy code.'",
+          "Phúc: 'Chúng tôi không thay đổi cấu hình thông báo gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề push notification?",
+        "question": "Ai đang nói thật về vấn đề thông báo đẩy?",
         "difficulty": "easy",
         "language": "swift",
         "category": "mobile",
         "hints": [
-          "Check APNS environment (sandbox vs production) 🔄",
-          "Verify push notification entitlements 📝",
-          "Device token registration process 📱"
+          "Kiểm tra log của server thông báo",
+          "So sánh cấu hình thông báo giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra thông báo"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Lan nói thật" },
-          { "id": 3, "text": "Chỉ Minh nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Hạnh đang nói thật" },
+          { "id": 2, "text": "Lâm đang nói thật" },
+          { "id": 3, "text": "Phúc đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
-        "correctAnswer": 2,
+        "correctAnswer": 1,
         "explanation": {
-          "logic": "Lan nói thật vì device token registration có thể verify được. Minh nói dối vì vấn đề thường nằm ở certificate không match với environment.",
-          "technicalDetails": "APNS requires correct certificate type (development vs production) và proper entitlements trong project."
+          "logic": "Hạnh đang nói thật vì lỗi thường chỉ xuất hiện khi gửi thông báo từ server. Lâm có thể đã bỏ sót thông báo. Phúc có thể kiểm tra lại log cấu hình thông báo.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra thông báo và cấu hình server."
         }
       },
       {
         "id": 7,
-        "title": "UITableView Refresh Bug",
-        "scenario": "UITableView không update sau khi thêm data.\nDev Nam implement refresh logic.\nQA Oanh test user interaction.",
+        "title": "Lỗi Tương Tác Người Dùng",
+        "scenario": "Trưởng nhóm Thảo báo cáo lỗi tương tác người dùng.\nDev junior Vinh khẳng định đã kiểm tra tất cả tương tác.\nDevOps Khánh nói rằng không có thay đổi nào trong cấu hình giao diện.",
         "statements": [
-          "Nam: 'reloadData() được gọi trên main thread.'",
-          "Oanh: 'Cell hiển thị sai sau khi pull to refresh.'"
+          "Thảo: 'Lỗi chỉ xuất hiện khi người dùng nhấn nút X.'",
+          "Vinh: 'Tôi đã kiểm tra tất cả tương tác trước khi đẩy code.'",
+          "Khánh: 'Chúng tôi không thay đổi cấu hình giao diện gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề UITableView?",
+        "question": "Ai đang nói thật về lỗi tương tác người dùng?",
         "difficulty": "easy",
         "language": "swift",
-        "category": "mobile",
+        "category": "frontend",
         "hints": [
-          "UI updates must be on main thread 🧵",
-          "Check data source array management 📊",
-          "TableView delegate methods implementation 📱"
+          "Kiểm tra log của giao diện người dùng",
+          "So sánh cấu hình giao diện giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra tương tác"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Nam nói thật" },
-          { "id": 3, "text": "Chỉ Oanh nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Thảo đang nói thật" },
+          { "id": 2, "text": "Vinh đang nói thật" },
+          { "id": 3, "text": "Khánh đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
-        "correctAnswer": 3,
+        "correctAnswer": 1,
         "explanation": {
-          "logic": "Oanh nói thật vì cell display issues có thể quan sát được. Nam nói dối vì dù reloadData() được gọi trên main thread, data source array có thể không được update đúng.",
-          "technicalDetails": "UITableView cần proper synchronization giữa data source và UI updates."
+          "logic": "Thảo đang nói thật vì lỗi thường chỉ xuất hiện khi người dùng nhấn nút X. Vinh có thể đã bỏ sót tương tác. Khánh có thể kiểm tra lại log cấu hình giao diện.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra tương tác người dùng và cấu hình giao diện."
         }
       },
       {
         "id": 8,
-        "title": "Image Cache Mystery",
-        "scenario": "Images load chậm và consume nhiều memory.\nDev Phương implement image caching.\nQA Quân test performance.",
+        "title": "Vấn Đề Với Tải Dữ Liệu",
+        "scenario": "Trưởng nhóm Duyên báo cáo lỗi tải dữ liệu.\nDev junior Tài khẳng định đã kiểm tra tất cả quy trình tải.\nDevOps Quý nói rằng không có thay đổi nào trong cấu hình tải.",
         "statements": [
-          "Phương: 'NSCache được sử dụng cho image caching.'",
-          "Quân: 'Memory usage tăng liên tục khi scroll.'"
+          "Duyên: 'Lỗi chỉ xuất hiện khi tải dữ liệu từ server.'",
+          "Tài: 'Tôi đã kiểm tra tất cả quy trình tải trước khi đẩy code.'",
+          "Quý: 'Chúng tôi không thay đổi cấu hình tải gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề image caching?",
+        "question": "Ai đang nói thật về vấn đề tải dữ liệu?",
         "difficulty": "easy",
         "language": "swift",
-        "category": "mobile",
+        "category": "backend",
         "hints": [
-          "NSCache vs Dictionary for caching 🗄️",
-          "Memory warning handling ⚠️",
-          "Image resizing before caching 🖼️"
+          "Kiểm tra log của server tải dữ liệu",
+          "So sánh cấu hình tải giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra quy trình tải"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Phương nói thật" },
-          { "id": 3, "text": "Chỉ Quân nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Duyên đang nói thật" },
+          { "id": 2, "text": "Tài đang nói thật" },
+          { "id": 3, "text": "Quý đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
         "correctAnswer": 1,
         "explanation": {
-          "logic": "Cả hai đều nói thật. NSCache được sử dụng nhưng có thể chưa implement proper memory warning handling.",
-          "technicalDetails": "Image caching cần kết hợp NSCache với proper memory management và image resizing."
+          "logic": "Duyên đang nói thật vì lỗi thường chỉ xuất hiện khi tải dữ liệu từ server. Tài có thể đã bỏ sót quy trình tải. Quý có thể kiểm tra lại log cấu hình tải.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra quy trình tải và cấu hình server."
         }
       },
       {
         "id": 9,
-        "title": "UserDefaults Sync Issue",
-        "scenario": "Settings không được lưu giữa các lần mở app.\nDev Rong làm việc với UserDefaults.\nQA Sơn test app state.",
+        "title": "Lỗi Xử Lý Sự Kiện",
+        "scenario": "Trưởng nhóm Hòa báo cáo lỗi xử lý sự kiện.\nDev junior Khang khẳng định đã kiểm tra tất cả sự kiện.\nDevOps Lộc nói rằng không có thay đổi nào trong cấu hình sự kiện.",
         "statements": [
-          "Rong: 'UserDefaults.standard.synchronize() được gọi sau mỗi lần save.'",
-          "Sơn: 'Settings reset sau khi force close app.'"
+          "Hòa: 'Lỗi chỉ xuất hiện khi xử lý sự kiện từ người dùng.'",
+          "Khang: 'Tôi đã kiểm tra tất cả sự kiện trước khi đẩy code.'",
+          "Lộc: 'Chúng tôi không thay đổi cấu hình sự kiện gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề UserDefaults?",
+        "question": "Ai đang nói thật về lỗi xử lý sự kiện?",
         "difficulty": "easy",
         "language": "swift",
-        "category": "mobile",
+        "category": "frontend",
         "hints": [
-          "synchronize() không còn cần thiết trong iOS mới 📝",
-          "Check key names trong UserDefaults 🔑",
-          "App lifecycle và data persistence 🔄"
+          "Kiểm tra log của sự kiện người dùng",
+          "So sánh cấu hình sự kiện giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra sự kiện"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Rong nói thật" },
-          { "id": 3, "text": "Chỉ Sơn nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Hòa đang nói thật" },
+          { "id": 2, "text": "Khang đang nói thật" },
+          { "id": 3, "text": "Lộc đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
-        "correctAnswer": 3,
+        "correctAnswer": 1,
         "explanation": {
-          "logic": "Sơn nói thật vì settings reset có thể verify được. Rong nói dối vì synchronize() không còn cần thiết trong iOS mới và có thể gây performance issues.",
-          "technicalDetails": "UserDefaults tự động synchronize trong iOS mới, không cần gọi method synchronize() nữa."
+          "logic": "Hòa đang nói thật vì lỗi thường chỉ xuất hiện khi xử lý sự kiện từ người dùng. Khang có thể đã bỏ sót sự kiện. Lộc có thể kiểm tra lại log cấu hình sự kiện.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra sự kiện người dùng và cấu hình sự kiện."
         }
       },
       {
         "id": 10,
-        "title": "Animation Timing Bug",
-        "scenario": "UIView animation không mượt.\nDev Tùng update animation code.\nQA Uyên test trên các device.",
+        "title": "Vấn Đề Với Tích Hợp API",
+        "scenario": "Trưởng nhóm Phương báo cáo lỗi tích hợp API.\nDev junior Huy khẳng định đã kiểm tra tất cả tích hợp.\nDevOps Trí nói rằng không có thay đổi nào trong cấu hình API.",
         "statements": [
-          "Tùng: 'Animation duration được set chính xác.'",
-          "Uyên: 'Animation lag trên iPhone đời cũ.'"
+          "Phương: 'Lỗi chỉ xuất hiện khi tích hợp API từ bên thứ ba.'",
+          "Huy: 'Tôi đã kiểm tra tất cả tích hợp trước khi đẩy code.'",
+          "Trí: 'Chúng tôi không thay đổi cấu hình API gần đây.'"
         ],
-        "question": "Ai đang nói thật về vấn đề animation?",
+        "question": "Ai đang nói thật về vấn đề tích hợp API?",
         "difficulty": "easy",
         "language": "swift",
-        "category": "mobile",
+        "category": "backend",
         "hints": [
-          "Check animation timing function ⏱️",
-          "Device performance considerations 📱",
-          "Main thread và animation 🧵"
+          "Kiểm tra log của API bên thứ ba",
+          "So sánh cấu hình API giữa các môi trường",
+          "Một người đang nói dối về việc kiểm tra tích hợp"
         ],
         "answers": [
-          { "id": 1, "text": "Cả hai đều nói thật" },
-          { "id": 2, "text": "Chỉ Tùng nói thật" },
-          { "id": 3, "text": "Chỉ Uyên nói thật" },
-          { "id": 4, "text": "Cả hai đều nói dối" }
+          { "id": 1, "text": "Phương đang nói thật" },
+          { "id": 2, "text": "Huy đang nói thật" },
+          { "id": 3, "text": "Trí đang nói thật" },
+          { "id": 4, "text": "Mọi người đều nói dối" }
         ],
         "correctAnswer": 1,
         "explanation": {
-          "logic": "Cả hai đều nói thật. Duration có thể đúng nhưng animation vẫn lag trên device cũ do performance issues.",
-          "technicalDetails": "UIView animations cần consider device performance và proper timing function selection."
+          "logic": "Phương đang nói thật vì lỗi thường chỉ xuất hiện khi tích hợp API từ bên thứ ba. Huy có thể đã bỏ sót tích hợp. Trí có thể kiểm tra lại log cấu hình API.",
+          "technicalDetails": "Trường hợp này nhấn mạnh tầm quan trọng của việc kiểm tra tích hợp API và cấu hình API."
+        }
+      },
+
+      {
+        "id": 1,
+        "title": "Vụ Án Màn Hình Đen",
+        "scenario": "Một ứng dụng Android bị crash khi mở camera. Ba thành viên team đang thảo luận về nguyên nhân:\nAnh - Android Dev\nBình - QA\nCường - Tech Lead",
+        "statements": [
+          "Anh: 'App chỉ crash trên Android 11 trở lên thôi.'",
+          "Bình: 'Tôi test trên Android 10 thì vẫn bị crash.'",
+          "Cường: 'Chúng ta đã khai báo đầy đủ permission trong Manifest rồi.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề crash camera?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "Android 11 có thay đổi lớn về permission system 📱",
+          "Check logcat để xem chi tiết crash 🔍",
+          "Một người luôn nói thật về technical issue 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Anh nói thật" },
+          { "id": 2, "text": "Bình nói thật" },
+          { "id": 3, "text": "Cường nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Anh nói thật vì Android 11 giới thiệu thay đổi lớn về permission system, yêu cầu khai báo thêm queries trong manifest. Bình test trên Android 10 không thể bị crash vì lý do này. Cường nói đúng về manifest nhưng chưa đủ cho Android 11+.",
+          "technicalDetails": "Từ Android 11, ngoài camera permission, cần thêm <queries> tag trong AndroidManifest.xml để declare package visibility needs."
+        }
+      },
+      {
+        "id": 2,
+        "title": "Bí Ẩn Layout Biến Mất",
+        "scenario": "App hiển thị lỗi layout trên một số điện thoại Samsung. Ba người đang debug:\nDuy - Android Dev\nEm - UI Designer\nFan - QA Lead",
+        "statements": [
+          "Duy: 'Layout chỉ bị lỗi trên màn hình có notch.'",
+          "Em: 'Design system của chúng ta không hỗ trợ notch.'",
+          "Fan: 'Tôi thấy lỗi này trên cả điện thoại không có notch.'"
+        ],
+        "question": "Ai đang nói đúng về vấn đề layout?",
+        "difficulty": "easy",
+        "language": "xml",
+        "category": "mobile",
+        "hints": [
+          "Samsung có nhiều kích thước màn hình khác nhau 📱",
+          "Check layout inspector xem constraint 🔍",
+          "Một người đang nhầm lẫn về nguyên nhân thực sự 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Duy nói thật" },
+          { "id": 2, "text": "Em nói thật" },
+          { "id": 3, "text": "Fan nói thật" }
+        ],
+        "correctAnswer": 3,
+        "explanation": {
+          "logic": "Fan nói thật vì vấn đề không liên quan đến notch mà là do layout không được thiết kế responsive cho các kích thước màn hình khác nhau của Samsung.",
+          "technicalDetails": "Cần sử dụng ConstraintLayout và set dimension với match_constraint để layout linh hoạt trên mọi kích thước màn hình."
+        }
+      },
+      {
+        "id": 3,
+        "title": "Bí ẩn Tràn Bộ Nhớ",
+        "scenario": "App bị OutOfMemoryError khi load ảnh. Ba người thảo luận:\nGiang - Android Dev\nHùng - Performance QA\nInh - Senior Dev",
+        "statements": [
+          "Giang: 'Chúng ta đã dùng Glide để load ảnh rồi.'",
+          "Hùng: 'Memory leak xảy ra ở màn hình gallery.'",
+          "Inh: 'Bitmap được resize đúng kích thước rồi.'"
+        ],
+        "question": "Ai đang nói thật về memory issue?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "Glide tự động manage memory 🖼️",
+          "Check memory profiler trong Android Studio 📊",
+          "Một người đang bỏ qua một step quan trọng 🔍"
+        ],
+        "answers": [
+          { "id": 1, "text": "Giang nói thật" },
+          { "id": 2, "text": "Hùng nói thật" },
+          { "id": 3, "text": "Inh nói thật" }
+        ],
+        "correctAnswer": 2,
+        "explanation": {
+          "logic": "Hùng nói thật vì đã xác định đúng vị trí memory leak. Mặc dù dùng Glide và resize bitmap, nhưng vẫn có thể xảy ra leak nếu không clear references đúng cách trong lifecycle.",
+          "technicalDetails": "Cần implement onDestroy() để clear Glide resources và đảm bảo garbage collection hoạt động đúng."
+        }
+      },
+      {
+        "id": 4,
+        "title": "Vụ Án SharedPreferences",
+        "scenario": "Data user bị reset sau khi update app. Ba người đang điều tra:\nKhoa - Android Dev\nLan - QA\nMinh - Product Owner",
+        "statements": [
+          "Khoa: 'SharedPreferences vẫn hoạt động bình thường.'",
+          "Lan: 'Data chỉ bị mất trên phiên bản update từ CH Play.'",
+          "Minh: 'Chúng ta không đổi tên package trong bản update.'"
+        ],
+        "question": "Ai đang nói thật về việc mất data?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "SharedPreferences lưu theo package name 📱",
+          "Check version code trong build.gradle 🔍",
+          "Một người đang bỏ qua một detail quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Khoa nói thật" },
+          { "id": 2, "text": "Lan nói thật" },
+          { "id": 3, "text": "Minh nói thật" }
+        ],
+        "correctAnswer": 2,
+        "explanation": {
+          "logic": "Lan nói thật vì data chỉ bị mất khi update qua CH Play. Điều này thường xảy ra khi app được signed với key khác trong bản update.",
+          "technicalDetails": "Android sử dụng combination của package name và signing key để tạo unique identifier cho SharedPreferences storage."
+        }
+      },
+      {
+        "id": 5,
+        "title": "Bí Ẩn Notification",
+        "scenario": "Push notification không hiển thị trên một số máy. Ba người đang check:\nNam - Android Dev\nOanh - DevOps\nPhu - QA",
+        "statements": [
+          "Nam: 'Firebase token được generate đúng.'",
+          "Oanh: 'Server gửi notification thành công.'",
+          "Phu: 'Notification chỉ fail trên Android 8 trở lên.'"
+        ],
+        "question": "Ai đang nói thật về notification issue?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "Android 8+ yêu cầu notification channel 🔔",
+          "Check Firebase Console logs 📱",
+          "Một người đang bỏ qua một requirement quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Nam nói thật" },
+          { "id": 2, "text": "Oanh nói thật" },
+          { "id": 3, "text": "Phu nói thật" }
+        ],
+        "correctAnswer": 3,
+        "explanation": {
+          "logic": "Phu nói thật vì Android 8.0 (Oreo) trở lên bắt buộc phải có notification channel. Không set up channel sẽ khiến notification không hiển thị.",
+          "technicalDetails": "Cần tạo NotificationChannel với createNotificationChannel() và set importance level phù hợp."
+        }
+      },
+      {
+        "id": 6,
+        "title": "Vụ Án Crash Report",
+        "scenario": "App crash khi rotate màn hình. Ba người đang review:\nQuang - Android Dev\nRong - QA\nSon - Tech Lead",
+        "statements": [
+          "Quang: 'ViewModel đã handle configuration changes.'",
+          "Rong: 'Crash chỉ xảy ra khi có data đang load.'",
+          "Son: 'Chúng ta đã save state trong onSaveInstanceState.'"
+        ],
+        "question": "Ai đang nói thật về rotation crash?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "ViewModel tự survive configuration changes 📱",
+          "Check activity lifecycle during rotation 🔄",
+          "Async operations cần được handle đặc biệt 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Quang nói thật" },
+          { "id": 2, "text": "Rong nói thật" },
+          { "id": 3, "text": "Son nói thật" }
+        ],
+        "correctAnswer": 2,
+        "explanation": {
+          "logic": "Rong nói thật vì crash xảy ra khi có async operation đang chạy trong lúc rotate. ViewModel tồn tại qua configuration change nhưng async operation cần được handle riêng.",
+          "technicalDetails": "Cần sử dụng coroutines với viewModelScope hoặc lifecycleScope để handle async operations an toàn khi rotate."
+        }
+      },
+      {
+        "id": 7,
+        "title": "Bí Ẩn Background Service",
+        "scenario": "Service bị kill sau vài phút. Ba người đang debug:\nTuan - Android Dev\nUyen - System Analyst\nVan - QA",
+        "statements": [
+          "Tuan: 'Service đã được set là START_STICKY.'",
+          "Uyen: 'Chúng ta cần foreground service.'",
+          "Van: 'Service chỉ bị kill trên Android 9 trở lên.'"
+        ],
+        "question": "Ai đang nói thật về service issue?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "Android có background execution limits từ 8.0 ⏰",
+          "Foreground service cần notification 📱",
+          "START_STICKY không đủ cho long-running tasks 🔄"
+        ],
+        "answers": [
+          { "id": 1, "text": "Tuan nói thật" },
+          { "id": 2, "text": "Uyen nói thật" },
+          { "id": 3, "text": "Van nói thật" }
+        ],
+        "correctAnswer": 2,
+        "explanation": {
+          "logic": "Uyen nói thật vì background service bị giới hạn từ Android 8.0. Foreground service với notification là cách đúng để giữ service chạy lâu dài.",
+          "technicalDetails": "Cần implement startForeground() với notification và khai báo FOREGROUND_SERVICE permission trong manifest."
+        }
+      },
+      {
+        "id": 8,
+        "title": "Vụ Án Custom View",
+        "scenario": "Custom view bị vẽ sai trên một số device. Ba người đang check:\nXuan - Android Dev\nYen - UI/UX\nZung - QA",
+        "statements": [
+          "Xuan: 'onDraw() được override đúng cách.'",
+          "Yen: 'Design spec đã tính đến density của màn hình.'",
+          "Zung: 'View chỉ vẽ sai trên màn hình độ phân giải cao.'"
+        ],
+        "question": "Ai đang nói thật về custom view issue?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "Check dp to px conversion 📱",
+          "Different screen densities need different calculations 🔍",
+          "Hardware acceleration có thể ảnh hưởng đến drawing 🎨"
+        ],
+        "answers": [
+          { "id": 1, "text": "Xuan nói thật" },
+          { "id": 2, "text": "Yen nói thật" },
+          { "id": 3, "text": "Zung nói thật" }
+        ],
+        "correctAnswer": 3,
+        "explanation": {
+          "logic": "Zung nói thật vì vấn đề chỉ xuất hiện trên màn hình độ phân giải cao, cho thấy có vấn đề với density calculation.",
+          "technicalDetails": "Cần sử dụng TypedValue.applyDimension() để convert dp sang px đúng cách theo screen density."
+        }
+      },
+      {
+        "id": 9,
+        "title": "Bí Ẩn RecyclerView",
+        "scenario": "RecyclerView bị lag khi scroll. Ba người đang optimize:\nAn - Android Dev\nBao - Performance Engineer\nCuc - QA",
+        "statements": [
+          "An: 'ViewHolder đã được reuse đúng cách.'",
+          "Bao: 'Image loading là nguyên nhân chính.'",
+          "Cuc: 'Lag chỉ xảy ra với list dài.'"
+        ],
+        "question": "Ai đang nói thật về performance issue?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "Image loading có thể block main thread 🖼️",
+          "RecyclerView có built-in view recycling 📱",
+          "List size ảnh hưởng đến memory usage 📊"
+        ],
+        "answers": [
+          { "id": 1, "text": "An nói thật" },
+          { "id": 2, "text": "Bao nói thật" },
+          { "id": 3, "text": "Cuc nói thật" }
+        ],
+        "correctAnswer": 2,
+        "explanation": {
+          "logic": "Bao nói thật vì image loading không được optimize có thể gây lag khi scroll. ViewHolder reuse và list size không phải nguyên nhân chính của vấn đề.",
+          "technicalDetails": "Cần sử dụng Glide hoặc Coil với placeholder và proper caching để optimize image loading trong RecyclerView."
+        }
+      },
+      {
+        "id": 10,
+        "title": "Vụ Án Deep Link",
+        "scenario": "Deep link không hoạt động trên một số device. Ba người đang investigate:\nDuc - Android Dev\nEm - QA\nFu - Tech Lead",
+        "statements": [
+          "Duc: 'Intent filter trong manifest đã config đúng.'",
+          "Em: 'Link chỉ fail trên Chrome mobile.'",
+          "Fu: 'App Links đã được verify với server.'"
+        ],
+        "question": "Ai đang nói thật về deep link issue?",
+        "difficulty": "easy",
+        "language": "kotlin",
+        "category": "mobile",
+        "hints": [
+          "Chrome requires Digital Asset Links 🔗",
+          "Check assetlinks.json configuration 📱",
+          "Intent filter needs proper data tags 🔍"
+        ],
+        "answers": [
+          { "id": 1, "text": "Duc nói thật" },
+          { "id": 2, "text": "Em nói thật" },
+          { "id": 3, "text": "Fu nói thật" }
+        ],
+        "correctAnswer": 2,
+        "explanation": {
+          "logic": "Em nói thật vì Chrome mobile có yêu cầu đặc biệt về App Links verification. Manifest config đúng không đảm bảo deep link hoạt động trên mọi browser.",
+          "technicalDetails": "Cần setup Digital Asset Links và host assetlinks.json trên server để Chrome mobile verify được App Links."
+        }
+      },
+
+      {
+        "id": 1,
+        "title": "Vụ Án Biến Mất Console Log",
+        "scenario": "Một đoạn mã JavaScript không in ra console log như mong đợi. Ba người đang thảo luận:\nAn - Frontend Dev\nBình - QA\nCường - Tech Lead",
+        "statements": [
+          "An: 'Tôi đã kiểm tra và không có lỗi cú pháp.'",
+          "Bình: 'Console log chỉ không hoạt động trên Firefox.'",
+          "Cường: 'Chúng ta đã bật chế độ strict mode.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề console log?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem có lỗi nào bị bắt không 🔍",
+          "Strict mode có thể ảnh hưởng đến một số lỗi 🛠️",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "An nói thật" },
+          { "id": 2, "text": "Bình nói thật" },
+          { "id": 3, "text": "Cường nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "An nói thật vì không có lỗi cú pháp, nhưng có thể có lỗi logic khác. Bình có thể nhầm lẫn về trình duyệt, và strict mode không ảnh hưởng đến console log.",
+          "technicalDetails": "Cần kiểm tra xem có lỗi logic nào khác ngăn cản console log hoạt động không."
+        }
+      },
+      {
+        "id": 2,
+        "title": "Bí Ẩn Hàm Không Chạy",
+        "scenario": "Một hàm JavaScript không được gọi khi nhấn nút. Ba người đang điều tra:\nDuy - Frontend Dev\nEm - UI Designer\nFan - QA",
+        "statements": [
+          "Duy: 'Hàm đã được gán đúng cho sự kiện click.'",
+          "Em: 'Nút không bị ẩn trong CSS.'",
+          "Fan: 'Sự kiện click không hoạt động trên Chrome.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề hàm không chạy?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem có lỗi JavaScript nào không 🛠️",
+          "Sự kiện click có thể bị chặn bởi một yếu tố khác 🔍",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Duy nói thật" },
+          { "id": 2, "text": "Em nói thật" },
+          { "id": 3, "text": "Fan nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Duy nói thật vì hàm đã được gán đúng, nhưng có thể có một yếu tố khác chặn sự kiện click. Em và Fan có thể nhầm lẫn về nguyên nhân thực sự.",
+          "technicalDetails": "Cần kiểm tra xem có yếu tố nào khác chặn sự kiện click không, như một overlay hoặc lỗi JavaScript."
+        }
+      },
+      {
+        "id": 3,
+        "title": "Vụ Án Biến Mất Dữ Liệu",
+        "scenario": "Dữ liệu từ API không được hiển thị trên trang. Ba người đang tìm hiểu:\nGiang - Frontend Dev\nHùng - Backend Dev\nInh - QA",
+        "statements": [
+          "Giang: 'Tôi đã kiểm tra và API trả về dữ liệu đúng.'",
+          "Hùng: 'API không có lỗi nào trong log.'",
+          "Inh: 'Dữ liệu chỉ không hiển thị trên Safari.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề dữ liệu không hiển thị?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra console log để xem có lỗi nào không 🔍",
+          "Safari có thể có vấn đề với một số tính năng JavaScript 🛠️",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Giang nói thật" },
+          { "id": 2, "text": "Hùng nói thật" },
+          { "id": 3, "text": "Inh nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Giang nói thật vì API trả về dữ liệu đúng, nhưng có thể có vấn đề với cách dữ liệu được xử lý trên frontend. Inh có thể nhầm lẫn về trình duyệt, và Hùng có thể bỏ qua một lỗi không được log.",
+          "technicalDetails": "Cần kiểm tra cách dữ liệu được xử lý và hiển thị trên frontend, đặc biệt là trên các trình duyệt khác nhau."
+        }
+      },
+      {
+        "id": 4,
+        "title": "Bí Ẩn Biến Không Được Định Nghĩa",
+        "scenario": "Một biến JavaScript không được định nghĩa khi chạy script. Ba người đang kiểm tra:\nKhoa - Frontend Dev\nLan - QA\nMinh - Tech Lead",
+        "statements": [
+          "Khoa: 'Biến đã được khai báo trong hàm.'",
+          "Lan: 'Biến chỉ không được định nghĩa trên Firefox.'",
+          "Minh: 'Chúng ta đã sử dụng let để khai báo biến.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề biến không được định nghĩa?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem biến có nằm trong scope không 🔍",
+          "Firefox có thể có vấn đề với một số tính năng JavaScript 🛠️",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Khoa nói thật" },
+          { "id": 2, "text": "Lan nói thật" },
+          { "id": 3, "text": "Minh nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Khoa nói thật vì biến đã được khai báo trong hàm, nhưng có thể có vấn đề với scope. Lan có thể nhầm lẫn về trình duyệt, và Minh có thể bỏ qua một lỗi khác.",
+          "technicalDetails": "Cần kiểm tra xem biến có nằm trong scope đúng không và có bị ảnh hưởng bởi hoisting không."
+        }
+      },
+      {
+        "id": 5,
+        "title": "Vụ Án Hàm Không Trả Về Kết Quả",
+        "scenario": "Một hàm JavaScript không trả về kết quả như mong đợi. Ba người đang điều tra:\nNam - Frontend Dev\nOanh - QA\nPhu - Tech Lead",
+        "statements": [
+          "Nam: 'Hàm đã được gọi đúng cách.'",
+          "Oanh: 'Hàm chỉ không trả về kết quả trên Edge.'",
+          "Phu: 'Chúng ta đã kiểm tra và không có lỗi cú pháp.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề hàm không trả về kết quả?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem hàm có return đúng không 🔍",
+          "Edge có thể có vấn đề với một số tính năng JavaScript 🛠️",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Nam nói thật" },
+          { "id": 2, "text": "Oanh nói thật" },
+          { "id": 3, "text": "Phu nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Nam nói thật vì hàm đã được gọi đúng cách, nhưng có thể có vấn đề với logic bên trong hàm. Oanh có thể nhầm lẫn về trình duyệt, và Phu có thể bỏ qua một lỗi logic.",
+          "technicalDetails": "Cần kiểm tra logic bên trong hàm và đảm bảo rằng hàm return đúng giá trị mong đợi."
+        }
+      },
+      {
+        "id": 6,
+        "title": "Bí Ẩn Sự Kiện Không Kích Hoạt",
+        "scenario": "Một sự kiện JavaScript không được kích hoạt khi nhấn nút. Ba người đang kiểm tra:\nQuang - Frontend Dev\nRong - QA\nSon - Tech Lead",
+        "statements": [
+          "Quang: 'Sự kiện đã được gán đúng cho nút.'",
+          "Rong: 'Sự kiện chỉ không hoạt động trên Safari.'",
+          "Son: 'Chúng ta đã kiểm tra và không có lỗi cú pháp.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề sự kiện không kích hoạt?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem có lỗi JavaScript nào không 🔍",
+          "Safari có thể có vấn đề với một số tính năng JavaScript 🛠️",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Quang nói thật" },
+          { "id": 2, "text": "Rong nói thật" },
+          { "id": 3, "text": "Son nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Quang nói thật vì sự kiện đã được gán đúng, nhưng có thể có một yếu tố khác chặn sự kiện. Rong có thể nhầm lẫn về trình duyệt, và Son có thể bỏ qua một lỗi logic.",
+          "technicalDetails": "Cần kiểm tra xem có yếu tố nào khác chặn sự kiện không, như một overlay hoặc lỗi JavaScript."
+        }
+      },
+      {
+        "id": 7,
+        "title": "Vụ Án Biến Không Được Cập Nhật",
+        "scenario": "Một biến JavaScript không được cập nhật khi chạy script. Ba người đang kiểm tra:\nTuan - Frontend Dev\nUyen - QA\nVan - Tech Lead",
+        "statements": [
+          "Tuan: 'Biến đã được khai báo đúng cách.'",
+          "Uyen: 'Biến chỉ không được cập nhật trên Firefox.'",
+          "Van: 'Chúng ta đã sử dụng const để khai báo biến.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề biến không được cập nhật?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem biến có nằm trong scope không 🔍",
+          "Firefox có thể có vấn đề với một số tính năng JavaScript 🛠️",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Tuan nói thật" },
+          { "id": 2, "text": "Uyen nói thật" },
+          { "id": 3, "text": "Van nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Tuan nói thật vì biến đã được khai báo đúng cách, nhưng có thể có vấn đề với scope. Uyen có thể nhầm lẫn về trình duyệt, và Van có thể bỏ qua một lỗi khác.",
+          "technicalDetails": "Cần kiểm tra xem biến có nằm trong scope đúng không và có bị ảnh hưởng bởi hoisting không."
+        }
+      },
+      {
+        "id": 8,
+        "title": "Bí Ẩn Hàm Không Chạy Đúng",
+        "scenario": "Một hàm JavaScript không chạy đúng khi nhấn nút. Ba người đang điều tra:\nXuan - Frontend Dev\nYen - UI Designer\nZung - QA",
+        "statements": [
+          "Xuan: 'Hàm đã được gán đúng cho sự kiện click.'",
+          "Yen: 'Nút không bị ẩn trong CSS.'",
+          "Zung: 'Sự kiện click không hoạt động trên Chrome.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề hàm không chạy đúng?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem có lỗi JavaScript nào không 🛠️",
+          "Sự kiện click có thể bị chặn bởi một yếu tố khác 🔍",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Xuan nói thật" },
+          { "id": 2, "text": "Yen nói thật" },
+          { "id": 3, "text": "Zung nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Xuan nói thật vì hàm đã được gán đúng, nhưng có thể có một yếu tố khác chặn sự kiện click. Yen và Zung có thể nhầm lẫn về nguyên nhân thực sự.",
+          "technicalDetails": "Cần kiểm tra xem có yếu tố nào khác chặn sự kiện click không, như một overlay hoặc lỗi JavaScript."
+        }
+      },
+      {
+        "id": 9,
+        "title": "Vụ Án Biến Không Được Khởi Tạo",
+        "scenario": "Một biến JavaScript không được khởi tạo khi chạy script. Ba người đang kiểm tra:\nAn - Frontend Dev\nBao - QA\nCuc - Tech Lead",
+        "statements": [
+          "An: 'Biến đã được khai báo trong hàm.'",
+          "Bao: 'Biến chỉ không được khởi tạo trên Edge.'",
+          "Cuc: 'Chúng ta đã sử dụng let để khai báo biến.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề biến không được khởi tạo?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem biến có nằm trong scope không 🔍",
+          "Edge có thể có vấn đề với một số tính năng JavaScript 🛠️",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "An nói thật" },
+          { "id": 2, "text": "Bao nói thật" },
+          { "id": 3, "text": "Cuc nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "An nói thật vì biến đã được khai báo trong hàm, nhưng có thể có vấn đề với scope. Bao có thể nhầm lẫn về trình duyệt, và Cuc có thể bỏ qua một lỗi khác.",
+          "technicalDetails": "Cần kiểm tra xem biến có nằm trong scope đúng không và có bị ảnh hưởng bởi hoisting không."
+        }
+      },
+      {
+        "id": 10,
+        "title": "Bí Ẩn Hàm Không Trả Về Kết Quả Đúng",
+        "scenario": "Một hàm JavaScript không trả về kết quả đúng như mong đợi. Ba người đang điều tra:\nDuc - Frontend Dev\nEm - QA\nFu - Tech Lead",
+        "statements": [
+          "Duc: 'Hàm đã được gọi đúng cách.'",
+          "Em: 'Hàm chỉ không trả về kết quả đúng trên Firefox.'",
+          "Fu: 'Chúng ta đã kiểm tra và không có lỗi cú pháp.'"
+        ],
+        "question": "Ai đang nói thật về vấn đề hàm không trả về kết quả đúng?",
+        "difficulty": "easy",
+        "language": "javascript",
+        "category": "frontend",
+        "hints": [
+          "Kiểm tra xem hàm có return đúng không 🔍",
+          "Firefox có thể có vấn đề với một số tính năng JavaScript 🛠️",
+          "Một người đang bỏ qua một chi tiết quan trọng 🤔"
+        ],
+        "answers": [
+          { "id": 1, "text": "Duc nói thật" },
+          { "id": 2, "text": "Em nói thật" },
+          { "id": 3, "text": "Fu nói thật" }
+        ],
+        "correctAnswer": 1,
+        "explanation": {
+          "logic": "Duc nói thật vì hàm đã được gọi đúng cách, nhưng có thể có vấn đề với logic bên trong hàm. Em có thể nhầm lẫn về trình duyệt, và Fu có thể bỏ qua một lỗi logic.",
+          "technicalDetails": "Cần kiểm tra logic bên trong hàm và đảm bảo rằng hàm return đúng giá trị mong đợi."
         }
       }
     ]
